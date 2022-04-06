@@ -13,7 +13,7 @@ namespace Mediatek86.modele
         private static readonly string userid = "root";
         private static readonly string password = "";
         private static readonly string database = "mediatek86";
-        private static readonly string connectionString = "server="+server+";user id="+userid+";password="+password+";database="+database+";SslMode=none";
+        private static readonly string connectionString = "server=" + server + ";user id=" + userid + ";password=" + password + ";database=" + database + ";SslMode=none";
 
         /// <summary>
         /// Retourne tous les genres à partir de la BDD
@@ -110,7 +110,7 @@ namespace Mediatek86.modele
                 string genre = (string)curs.Field("genre");
                 string lepublic = (string)curs.Field("public");
                 string rayon = (string)curs.Field("rayon");
-                Livre livre = new Livre(id, titre, image, isbn, auteur, collection, idgenre, genre, 
+                Livre livre = new Livre(id, titre, image, isbn, auteur, collection, idgenre, genre,
                     idpublic, lepublic, idrayon, rayon);
                 lesLivres.Add(livre);
             }
@@ -257,7 +257,114 @@ namespace Mediatek86.modele
                 curs.ReqUpdate(req, parameters);
                 curs.Close();
                 return true;
-            }catch{
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// ecriture d'un document dans la bdd
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+
+        public static bool CreerDocument(Document document)
+        {
+            // req 1 : insert into table document
+            string req1 = "insert into document values (@idDocument,@titre,@image,@idRayon,@idPublic, @idGenre)";
+            Dictionary<string, object> parameters1 = new Dictionary<string, object>
+                {
+                    { "@idDocument", document.Id},
+                    { "@titre", document.Titre},
+                    { "@image", document.Image},
+                    { "@idRayon", document.IdRayon},
+                    { "@idPublic",document.IdPublic},
+                    {"@idGenre", document.IdGenre }
+            };
+            // req 2 : insert into table livres_dvd si c'est un livre ou dvd
+            string req2 = null;
+            Dictionary<string, object> parameters2 = null;
+            // req 3 : insert into table livre, revue ou dvd selon le type
+            string req3 = null;
+            Dictionary<string, object> parameters3 = null;
+
+            switch (document)
+            {
+                case Livre _:
+                    {
+                        Livre livre = (Livre)document;
+
+                        req2 = "insert into livres_dvd values (@id)";
+                        parameters2 = new Dictionary<string, object>
+                        {
+                            {"@id", livre.Id }
+                        };
+
+                        req3 = "insert into livre values (@idLivre,@isbn,@auteur,@collection)";
+                        parameters3 = new Dictionary<string, object>
+                            {
+                                { "@idLivre", livre.Id},
+                                { "@isbn", livre.Isbn},
+                                { "@auteur", livre.Auteur},
+                                { "@collection", livre.Collection}
+                            };
+                        break;
+                    }
+
+                case Dvd _:
+                    {
+                        Dvd dvd = (Dvd)document;
+
+                        req2 = "insert into livres_dvd values (@id)";
+                        parameters2 = new Dictionary<string, object>
+                        {
+                            {"@id", dvd.Id }
+                        };
+
+                        req3 = "insert into dvd values (@idDvd,@synopsis,@realisateur,@duree)";
+                        parameters3 = new Dictionary<string, object>
+                            {
+                                { "@idDvd", dvd.Id},
+                                { "@synopsis", dvd.Synopsis},
+                                { "@realisateur", dvd.Realisateur},
+                                { "@duree", dvd.Duree}
+                            };
+                        break;
+                    }
+
+                case Revue _:
+                    {
+                        Revue revue = (Revue)document;
+                        req3 = "insert into revue values (@idRevue, @empruntable,@periodicite,@delaiMiseADispo)";
+                        parameters3 = new Dictionary<string, object>
+                            {
+                                { "@idRevue", revue.Id},
+                                { "@empruntable", revue.Empruntable},
+                                { "@periodicite", revue.Periodicite},
+                                { "@delaiMiseADispo", revue.DelaiMiseADispo}
+                            };
+                        break;
+                    }
+            }
+            Console.WriteLine("req1 : " + req1 + "\nreq2 : " + req2 + "\nreq3 : " + req3);
+            try
+            {
+                // exécuter les deux requêtes dans une transaction
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+
+                curs.ReqUpdate(req1, parameters1);
+                if (document is Livre || document is Dvd)
+                {
+                    curs.ReqUpdate(req2, parameters2);
+                }
+                curs.ReqUpdate(req3, parameters3);
+
+                curs.Close();
+                return true;
+            }
+            catch
+            {
                 return false;
             }
         }
