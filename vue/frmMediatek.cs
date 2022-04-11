@@ -181,10 +181,15 @@ namespace Mediatek86.vue
         /// <param name="revue"></param>
         private void AfficheRevuesInfos(Revue revue)
         {
+            grpRevuesInfos.Text = "Informations détaillées";
+            revueEnModif = false;
+            OnOffEcritureRevue(false);
+
+            OnOffEcritureRevue(false);
             txbRevuesPeriodicite.Text = revue.Periodicite;
             chkRevuesEmpruntable.Checked = revue.Empruntable;
             txbRevuesImage.Text = revue.Image;
-            txbRevuesDateMiseADispo.Text = revue.DelaiMiseADispo.ToString();
+            nudRevuesDelai.Value = revue.DelaiMiseADispo;
             txbRevuesNumero.Text = revue.Id;
             cbxRevuesInfoGenres.SelectedIndex = lesGenres.FindIndex(x => x.Id.Equals(revue.IdGenre));
             cbxRevuesInfoPublics.SelectedIndex = lesPublics.FindIndex(x => x.Id.Equals(revue.IdPublic));
@@ -211,9 +216,9 @@ namespace Mediatek86.vue
             VideRevuesInfos();
             VideRevuesZones();
             OnOffEcritureRevue(true);
-            // calculer l'id du nouveau Dvd, attention : l'id des livres commence par 2
-            List<Revue> orderedList = lesRevues.OrderBy(o => o.Id).ToList();
-            txbRevuesNumero.Text = (int.Parse(orderedList.Last().Id) + 1).ToString();
+            grpRevuesInfos.Text = "Nouvelle revue";
+            // calculer l'id de la nouvelle revue, attention : l'id des revues commence par 1
+            txbRevuesNumero.Text = (int.Parse(lesRevues.OrderBy(o => o.Id).ToList().Last().Id) + 1).ToString();
         }
 
 
@@ -224,49 +229,55 @@ namespace Mediatek86.vue
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnRevueValider_Click(object sender, EventArgs e)
-        {
-            int dateMiseADisposition = 0;
-            if (!txbRevuesDateMiseADispo.Text.Equals(""))
-            {
-                try
-                {
-                    dateMiseADisposition = int.Parse(txbRevuesDateMiseADispo.Text);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("La date de mise à disposition doit être un entier !", "Alerte");
-                    txbRevuesDateMiseADispo.Text = "";
-                }
-            }
-            // les champs 'numéro', 'genre', 'public' et 'rayon' doivent être remplies
+        {           
+            // les champs 'numéro', 'genre', 'public' et 'rayon' sont obligatoires
             if (cbxRevuesInfoGenres.SelectedIndex >= 0 && cbxRevuesInfoPublics.SelectedIndex >= 0 && cbxRevuesInfoRayons.SelectedIndex >= 0)
             {
+                Categorie LeGenre = lesGenres[cbxRevuesInfoGenres.SelectedIndex];
+                Categorie lePublic = lesPublics[cbxRevuesInfoPublics.SelectedIndex];
+                Categorie leRayon = lesRayons[cbxRevuesInfoRayons.SelectedIndex];
+                Revue revue = new Revue(txbRevuesNumero.Text, txbRevuesTitre.Text, txbLivresImage.Text, LeGenre.Id, LeGenre.Libelle,
+                    lePublic.Id, lePublic.Libelle, leRayon.Id, leRayon.Libelle, chkRevuesEmpruntable.Checked, txbReceptionRevuePeriodicite.Text,(int)nudRevuesDelai.Value);
+
                 // mode ajout
                 if (!revueEnModif)
                 {
-                    Categorie LeGenre = lesGenres[cbxRevuesInfoGenres.SelectedIndex];
-                    Categorie lePublic = lesPublics[cbxRevuesInfoPublics.SelectedIndex];
-                    Categorie leRayon = lesRayons[cbxRevuesInfoRayons.SelectedIndex];
-                    Revue revue = new Revue(txbRevuesNumero.Text, txbRevuesTitre.Text, txbLivresImage.Text, LeGenre.Id, LeGenre.Libelle, 
-                        lePublic.Id, lePublic.Libelle, leRayon.Id, leRayon.Libelle, chkRevuesEmpruntable.Checked, txbReceptionRevuePeriodicite.Text, dateMiseADisposition);
+
                     if (controle.CreerDocument(revue))
                     {
-                        MessageBox.Show("La nouvelle revue " + revue.Titre + " est ajouté !", "Succès");
+                        MessageBox.Show("La nouvelle revue n°" + revue.Id + " est ajoutée !", "Succès");
                         lesRevues.Add(revue);
+                        lesRevues = lesRevues.OrderBy(x => x.Titre).ToList();
                         RemplirRevuesListeComplete();
+                        dgvRevuesListe.Rows[lesRevues.FindIndex(x => x.Id.Equals(revue.Id))].Selected = true;
                         AfficheRevuesInfos(revue);
-                        OnOffEcritureRevue(false);
                     }
                     else
                     {
-                        MessageBox.Show("La nouvelle revue " + revue.Titre + " n'est ajouté !", "Echec");
+                        MessageBox.Show("La nouvelle revue n°" + revue.Id + " n'est pas ajoutée !", "Echec");
 
                     }
                 }
                 // mode modification
                 else
                 {
+                    if (controle.ModifDocument(revue))
+                    {
+                        MessageBox.Show("La revue n°" + revue.Id + " est modifiée !", "Succès");
 
+                        int index = lesRevues.FindIndex(x => x.Id.Equals(revue.Id));
+                        if (index != -1)
+                        {
+                            lesRevues[index] = revue;
+                            RemplirRevuesListeComplete();
+                            dgvRevuesListe.Rows[index].Selected = true;
+                        }
+                        AfficheRevuesInfos(revue);                        
+                    }
+                    else
+                    {
+                        MessageBox.Show("La revue n°" + revue.Id + "n'est pas modifiée !", "Echec");
+                    }
                 }
 
             }
@@ -277,6 +288,19 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
+        /// événement clic sur le bouton "modifier" dans l'onglet Revues
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevueModif_Click(object sender, EventArgs e)
+        {
+            revueEnModif = true;
+            OnOffEcritureRevue(true);
+            grpRevuesInfos.Text = "Modification";
+        }
+
+
+        /// <summary>
         /// Vide les zones d'affichage des informations de la reuve
         /// </summary>
         private void VideRevuesInfos()
@@ -284,7 +308,7 @@ namespace Mediatek86.vue
             txbRevuesPeriodicite.Text = "";
             chkRevuesEmpruntable.Checked = false;
             txbRevuesImage.Text = "";
-            txbRevuesDateMiseADispo.Text = "";
+            nudRevuesDelai.Value = 0;
             txbRevuesNumero.Text = "";
             cbxRevuesInfoGenres.SelectedIndex = -1;
             cbxRevuesInfoPublics.SelectedIndex = -1;
@@ -299,13 +323,15 @@ namespace Mediatek86.vue
         /// <param name="acti"></param>
         private void OnOffEcritureRevue(bool acti)
         {
+            chkRevuesEmpruntable.Enabled = acti;
             txbRevuesTitre.ReadOnly = !acti;
             txbRevuesPeriodicite.ReadOnly = !acti;
-            txbRevuesDateMiseADispo.ReadOnly = !acti;
+            nudRevuesDelai.ReadOnly = !acti;
             cbxRevuesInfoGenres.Enabled = acti;
             cbxRevuesInfoPublics.Enabled = acti;
             cbxRevuesInfoRayons.Enabled = acti;
             txbRevuesImage.ReadOnly = !acti;
+            btnRevueValider.Enabled = acti;
         }
 
         /// <summary>
@@ -379,6 +405,8 @@ namespace Mediatek86.vue
                 {
                     Revue revue = (Revue)bdgRevuesListe.List[bdgRevuesListe.Position];
                     AfficheRevuesInfos(revue);
+                    btnRevueModif.Enabled = true;
+                    btnRevueSuppr.Enabled = true;
                 }
                 catch
                 {
@@ -388,6 +416,8 @@ namespace Mediatek86.vue
             else
             {
                 VideRevuesInfos();
+                btnRevueModif.Enabled = false;
+                btnRevueSuppr.Enabled = false;
             }
         }
 
@@ -599,13 +629,21 @@ namespace Mediatek86.vue
             VideLivresInfos();
             VideLivresZones();
             OnOffEcritureLivres(true);
+            grpLivresInfos.Text = "Nouveau livre";
             // calculer l'id du nouveau livre, attention : l'id des livres commence par 0
-            List<Livre> orderedList = lesLivres.OrderBy(o => o.Id).ToList();
-            string lastId = orderedList.Last().Id;
+            string lastId = lesLivres.OrderBy(o => o.Id).ToList().Last().Id;
             string newId = (int.Parse(lastId) + 1).ToString();
             newId = new string('0', lastId.Length - newId.Length) + newId;
             txbLivresNumero.Text = newId;
         }
+
+        private void btnLivreModif_Click(object sender, EventArgs e)
+        {
+            livreEnModif = true;
+            OnOffEcritureLivres(true);
+            grpLivresInfos.Text = "Modification";
+        }
+
         /// <summary>
         /// événement click sur le btnLivreValider
         /// valider les informations saisie sur le nouveau livre, et les transmettre dans la bdd
@@ -614,34 +652,53 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void btnLivreValider_Click(object sender, EventArgs e)
         {
-            // les champs 'numéro', 'genre', 'public' et 'rayon' doivent être remplies
+            // les champs 'numéro', 'genre', 'public' et 'rayon' sont obligatoires
             if (!txbLivresNumero.Equals("") && cbxLivresInfoGenres.SelectedIndex >= 0 && cbxLivresInfoPublics.SelectedIndex >= 0 && cbxLivresInfoRayons.SelectedIndex >= 0)
             {
+                Categorie LeGenre = lesGenres[cbxLivresInfoGenres.SelectedIndex];
+                Categorie lePublic = lesPublics[cbxLivresInfoPublics.SelectedIndex];
+                Categorie leRayon = lesRayons[cbxLivresInfoRayons.SelectedIndex];
+                Livre livre = new Livre(txbLivresNumero.Text, txbLivresTitre.Text, txbLivresImage.Text, txbLivresIsbn.Text, txbLivresAuteur.Text,
+                    txbLivresCollection.Text, LeGenre.Id, LeGenre.Libelle, lePublic.Id, lePublic.Libelle, leRayon.Id, leRayon.Libelle);
+
                 // mode ajout
                 if (!livreEnModif)
                 {
-                    Categorie LeGenre = lesGenres[cbxLivresInfoGenres.SelectedIndex];
-                    Categorie lePublic = lesPublics[cbxLivresInfoPublics.SelectedIndex];
-                    Categorie leRayon = lesRayons[cbxLivresInfoRayons.SelectedIndex];
-                    Livre livre = new Livre(txbLivresNumero.Text, txbLivresTitre.Text, txbLivresImage.Text, txbLivresIsbn.Text, txbLivresAuteur.Text,
-                        txbLivresCollection.Text, LeGenre.Id, LeGenre.Libelle, lePublic.Id, lePublic.Libelle, leRayon.Id, leRayon.Libelle);
                     if (controle.CreerDocument(livre))
-                    {                       
-                        MessageBox.Show("Le nouveau livre " + livre.Titre + " est ajouté !", "Succès");
+                    {
+                        MessageBox.Show("Le nouveau livre n°" + livre.Id + " est ajouté !", "Succès");
                         lesLivres.Add(livre);
+                        lesLivres = lesLivres.OrderBy(x => x.Titre).ToList();
                         RemplirLivresListeComplete();
+                        dgvLivresListe.Rows[lesLivres.FindIndex(x => x.Id.Equals(livre.Id))].Selected = true;
                         AfficheLivresInfos(livre);
-                        OnOffEcritureLivres(false);
                     }
                     else
                     {
-                        MessageBox.Show("Le nouveau livre " + livre.Titre + " n'est ajouté !", "Echec");
+                        MessageBox.Show("Le nouveau livre n°" + livre.Id + " n'est pas ajouté !", "Echec");
 
                     }
                 }
                 // mode modification
                 else
                 {
+                    if (controle.ModifDocument(livre))
+                    {
+                        MessageBox.Show("Le livre n°" + livre.Id + " est modifié !", "Succès");
+
+                        int index = lesLivres.FindIndex(x => x.Id.Equals(livre.Id));
+                        if (index != -1)
+                        {
+                            lesLivres[index] = livre;
+                            RemplirLivresListeComplete();
+                            dgvLivresListe.Rows[index].Selected = true;
+                        }
+                        AfficheLivresInfos(livre);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Le livre n°" + livre.Id + "n'est pas modifié !", "Echec");
+                    }
 
                 }
 
@@ -658,6 +715,10 @@ namespace Mediatek86.vue
         /// <param name="livre"></param>
         private void AfficheLivresInfos(Livre livre)
         {
+            grpLivresInfos.Text = "Informations détaillées";
+            livreEnModif = false;
+            OnOffEcritureLivres(false);
+
             txbLivresAuteur.Text = livre.Auteur;
             txbLivresCollection.Text = livre.Collection;
             txbLivresImage.Text = livre.Image;
@@ -766,6 +827,8 @@ namespace Mediatek86.vue
                 {
                     Livre livre = (Livre)bdgLivresListe.List[bdgLivresListe.Position];
                     AfficheLivresInfos(livre);
+                    btnLivreModif.Enabled = true;   
+                    btnLivreSuppr.Enabled = true;
                 }
                 catch
                 {
@@ -775,6 +838,8 @@ namespace Mediatek86.vue
             else
             {
                 VideLivresInfos();
+                btnLivreModif.Enabled = false;
+                btnLivreSuppr.Enabled = false;
             }
         }
 
@@ -880,6 +945,7 @@ namespace Mediatek86.vue
             cbxLivresInfoGenres.Enabled = acti;
             cbxLivresInfoPublics.Enabled = acti;
             cbxLivresInfoRayons.Enabled = acti;
+            btnLivreValider.Enabled = acti;
         }
         
         #endregion
@@ -1001,9 +1067,22 @@ namespace Mediatek86.vue
             VideDvdInfos();
             VideDvdZones();
             OnOffEcritureDvd(true);
+            grpDvdInfos.Text = "Nouveau Dvd";
             // calculer l'id du nouveau Dvd, attention : l'id des livres commence par 2
-            List<Dvd> orderedList = lesDvd.OrderBy(o => o.Id).ToList();            
-            txbDvdNumero.Text = (int.Parse(orderedList.Last().Id) + 1).ToString();
+            txbDvdNumero.Text = (int.Parse(lesDvd.OrderBy(o => o.Id).ToList().Last().Id) + 1).ToString();
+        }
+
+
+        /// <summary>
+        /// événement clic sur le bouton "modifier" dans l'onglet dvd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDvdModif_Click(object sender, EventArgs e)
+        {
+            dvdEnModif = true;
+            OnOffEcritureDvd(true);
+            grpDvdInfos.Text = "Modification";
         }
 
         /// <summary>
@@ -1014,49 +1093,56 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void btnDvdValider_Click(object sender, EventArgs e)
         {
-            int duree = 0;
-            if (!txbDvdDuree.Text.Equals(""))
-            {
-                try
-                {
-                    duree = int.Parse(txbDvdDuree.Text);
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("La durée doit être un entier !", "Alerte");
-                    txbDvdDuree.Text = "";
-                }
-            }
-         
-            // les champs 'numéro', 'genre', 'public' et 'rayon' doivent être remplies
+
+            // les champs 'genre', 'public' et 'rayon' sont obligatoires
             if (cbxDvdInfoGenres.SelectedIndex >= 0 && cbxDvdInfoPublics.SelectedIndex >= 0 && cbxDvdInfoRayons.SelectedIndex >= 0)
-            {
+            {               
+                Categorie LeGenre = lesGenres[cbxDvdInfoGenres.SelectedIndex];
+                Categorie lePublic = lesPublics[cbxDvdInfoPublics.SelectedIndex];
+                Categorie leRayon = lesRayons[cbxDvdInfoRayons.SelectedIndex];
+                Dvd dvd = new Dvd(txbDvdNumero.Text, txbDvdTitre.Text, txbDvdImage.Text, (int)nudDvdDuree.Value, txbDvdRealisateur.Text,
+                    txbDvdSynopsis.Text, LeGenre.Id, LeGenre.Libelle, lePublic.Id, lePublic.Libelle, leRayon.Id, leRayon.Libelle);
+
                 // mode ajout
                 if (!dvdEnModif)
                 {
-                    Categorie LeGenre = lesGenres[cbxDvdInfoGenres.SelectedIndex];
-                    Categorie lePublic = lesPublics[cbxDvdInfoPublics.SelectedIndex];
-                    Categorie leRayon = lesRayons[cbxDvdInfoRayons.SelectedIndex];
-                    Dvd dvd = new Dvd(txbDvdNumero.Text, txbDvdTitre.Text, txbDvdImage.Text, duree, txbDvdRealisateur.Text,
-                        txbDvdSynopsis.Text, LeGenre.Id, LeGenre.Libelle, lePublic.Id, lePublic.Libelle, leRayon.Id, leRayon.Libelle);
+
                     if (controle.CreerDocument(dvd))
                     {
-                        MessageBox.Show("Le nouveau Dvd " + dvd.Titre + " est ajouté !", "Succès");
+                        MessageBox.Show("Le nouveau Dvd n°" + dvd.Id + " est ajouté !", "Succès");
                         lesDvd.Add(dvd);
+                        lesDvd = lesDvd.OrderBy(x => x.Titre).ToList();
                         RemplirDvdListeComplete();
+                        dgvDvdListe.Rows[lesDvd.FindIndex(x => x.Id.Equals(dvd.Id))].Selected = true;
                         AfficheDvdInfos(dvd);
-                        OnOffEcritureLivres(false);
                     }
                     else
                     {
-                        MessageBox.Show("Le nouveau Dvd " + dvd.Titre + " n'est ajouté !", "Echec");
+                        MessageBox.Show("Le nouveau Dvd n°" + dvd.Id + " n'est pas ajouté !", "Echec");
 
                     }
                 }
+
                 // mode modification
                 else
                 {
+                    if (controle.ModifDocument(dvd))
+                    {
+                        MessageBox.Show("Le dvd n°" + dvd.Id + " est modifié !", "Succès");
 
+                        int index = lesDvd.FindIndex(x => x.Id.Equals(dvd.Id));
+                        if (index != -1)
+                        {
+                            lesDvd[index] = dvd;
+                            RemplirDvdListeComplete();
+                            dgvDvdListe.Rows[index].Selected = true;
+                        }
+                        AfficheDvdInfos(dvd);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Le dvd n°" + dvd.Id + "n'est pas modifié !", "Echec");
+                    }
                 }
 
             }
@@ -1072,10 +1158,14 @@ namespace Mediatek86.vue
         /// <param name="dvd"></param>
         private void AfficheDvdInfos(Dvd dvd)
         {
+            grpDvdInfos.Text = "Informations détaillées";
+            dvdEnModif = false;
+            OnOffEcritureDvd(false);
+
             txbDvdRealisateur.Text = dvd.Realisateur;
             txbDvdSynopsis.Text = dvd.Synopsis;
             txbDvdImage.Text = dvd.Image;
-            txbDvdDuree.Text = dvd.Duree.ToString() ;
+            nudDvdDuree.Value = dvd.Duree;
             txbDvdNumero.Text = dvd.Id;
             cbxDvdInfoGenres.SelectedIndex = lesGenres.FindIndex(x => x.Id.Equals(dvd.IdGenre));
             cbxDvdInfoPublics.SelectedIndex = lesPublics.FindIndex(x => x.Id.Equals(dvd.IdPublic));
@@ -1100,7 +1190,7 @@ namespace Mediatek86.vue
             txbDvdRealisateur.Text = "";
             txbDvdSynopsis.Text = "";
             txbDvdImage.Text = "";
-            txbDvdDuree.Text = "";
+            nudDvdDuree.Value = 0;
             txbDvdNumero.Text = "";
             cbxDvdInfoGenres.SelectedIndex = -1;
             cbxDvdInfoPublics.SelectedIndex = -1;
@@ -1114,7 +1204,7 @@ namespace Mediatek86.vue
         /// <param name="acti"></param>
         private void OnOffEcritureDvd(bool acti)
         {
-            txbDvdDuree.ReadOnly = !acti;
+            nudDvdDuree.ReadOnly = !acti;
             txbDvdTitre.ReadOnly = !acti;
             txbDvdRealisateur.ReadOnly = !acti;
             txbDvdSynopsis.ReadOnly = !acti;
@@ -1122,7 +1212,7 @@ namespace Mediatek86.vue
             cbxDvdInfoPublics.Enabled = acti;
             cbxDvdInfoRayons.Enabled = acti;
             txbDvdImage.ReadOnly = !acti;
-
+            btnDvdValider.Enabled = acti;
         }
 
         /// <summary>
@@ -1196,6 +1286,8 @@ namespace Mediatek86.vue
                 {
                     Dvd dvd = (Dvd)bdgDvdListe.List[bdgDvdListe.Position];
                     AfficheDvdInfos(dvd);
+                    btnDvdModif.Enabled = true;
+                    btnDvdSuppr.Enabled = true;
                 }
                 catch
                 {
@@ -1205,6 +1297,8 @@ namespace Mediatek86.vue
             else
             {
                 VideDvdInfos();
+                btnDvdModif.Enabled = false;
+                btnDvdSuppr.Enabled = false;
             }
         }
 
@@ -1563,8 +1657,8 @@ namespace Mediatek86.vue
         }
 
 
-        #endregion
 
-       
+
+        #endregion
     }
 }

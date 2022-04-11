@@ -103,11 +103,26 @@ namespace Mediatek86.controleur
             return Dao.CreerExemplaire(exemplaire);
         }
 
+        /// <summary>
+        /// Créer un document dans la bdd
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
         public bool CreerDocument(Document document)
         {
             return Dao.CreerDocument(document);
         }
 
+        /// <summary>
+        /// modifier un document dans la bdd
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public bool ModifDocument(Document document)
+        {
+            return Dao.ModifDocument(document);
+        }
+              
     }
 
 }

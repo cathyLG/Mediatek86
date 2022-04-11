@@ -369,5 +369,93 @@ namespace Mediatek86.modele
             }
         }
 
+        /// <summary>
+        /// update un document dans la bdd
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static bool ModifDocument(Document document)
+        {
+            // req 1 : update dans la table document
+            string req1 = "UPDATE document SET titre=@titre, image=@image, idrayon=@idRayon, idpublic=@idPublic, idgenre=@idGenre ";
+            req1 += "WHERE id = @idDocument";
+            Dictionary<string, object> parameters1 = new Dictionary<string, object>
+                {
+                    { "@idDocument", document.Id},
+                    { "@titre", document.Titre},
+                    { "@image", document.Image},
+                    { "@idRayon", document.IdRayon},
+                    { "@idPublic",document.IdPublic},
+                    { "@idGenre", document.IdGenre }
+            };
+            // inutile d'update dans la table livres_dvd qui ne contient que l'id
+            // req 2 : update dans la table livre, revue ou dvd selon le type
+            string req2 = null;
+            Dictionary<string, object> parameters2 = null;
+
+            switch (document)
+            {
+                case Livre _:
+                    {
+                        Livre livre = (Livre)document;
+                        req2 = "UPDATE livre SET isbn=@isbn,auteur=@auteur, collection=@collection WHERE id=@idLivre";
+                        parameters2 = new Dictionary<string, object>
+                            {
+                                { "@idLivre", livre.Id},
+                                { "@isbn", livre.Isbn},
+                                { "@auteur", livre.Auteur},
+                                { "@collection", livre.Collection}
+                            };
+                        break;
+                    }
+
+                case Dvd _:
+                    {
+                        Dvd dvd = (Dvd)document;
+                        req2 = "UPDATE dvd SET synopsis=@synopsis,realisateur=@realisateur,duree=@duree WHERE id=@idDvd";
+                        parameters2 = new Dictionary<string, object>
+                            {
+                                { "@idDvd", dvd.Id},
+                                { "@synopsis", dvd.Synopsis},
+                                { "@realisateur", dvd.Realisateur},
+                                { "@duree", dvd.Duree}
+                            };
+                        break;
+                    }
+
+                case Revue _:
+                    {
+                        Revue revue = (Revue)document;
+                        req2 = "UPDATE revue SET empruntable=@empruntable, periodicite=@periodicite, delaiMiseAdispo=@delaiMiseADispo ";
+                        req2 += "WHERE id=@idRevue";
+                        parameters2 = new Dictionary<string, object>
+                            {
+                                { "@idRevue", revue.Id},
+                                { "@empruntable", revue.Empruntable},
+                                { "@periodicite", revue.Periodicite},
+                                { "@delaiMiseADispo", revue.DelaiMiseADispo}
+                            };
+                        break;
+                    }
+            }
+            Console.WriteLine("req1 : " + req1 + "\nreq2 : " + req2);
+
+            //exécuter ces deux requêtes
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+
+                curs.ReqUpdate(req1, parameters1);
+                curs.ReqUpdate(req2, parameters2);
+
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }       
+
     }
 }
