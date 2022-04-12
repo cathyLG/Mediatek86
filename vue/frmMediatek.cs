@@ -249,8 +249,8 @@ namespace Mediatek86.vue
                         lesRevues.Add(revue);
                         lesRevues = lesRevues.OrderBy(x => x.Titre).ToList();
                         RemplirRevuesListeComplete();
-                        dgvRevuesListe.Rows[lesRevues.FindIndex(x => x.Id.Equals(revue.Id))].Selected = true;
-                        AfficheRevuesInfos(revue);
+                        bdgRevuesListe.Position = lesRevues.FindIndex(x => x.Id.Equals(revue.Id));
+                        //AfficheRevuesInfos(revue);
                     }
                     else
                     {
@@ -270,9 +270,9 @@ namespace Mediatek86.vue
                         {
                             lesRevues[index] = revue;
                             RemplirRevuesListeComplete();
-                            dgvRevuesListe.Rows[index].Selected = true;
+                            bdgRevuesListe.Position = index;
                         }
-                        AfficheRevuesInfos(revue);                        
+                        //AfficheRevuesInfos(revue);                        
                     }
                     else
                     {
@@ -297,6 +297,42 @@ namespace Mediatek86.vue
             revueEnModif = true;
             OnOffEcritureRevue(true);
             grpRevuesInfos.Text = "Modification";
+        }
+
+        /// <summary>
+        /// événement clic sur le bouton "supprimer" dans l'onglet Revues
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRevueSuppr_Click(object sender, EventArgs e)
+        {
+             Revue revue = (Revue)bdgRevuesListe.List[bdgRevuesListe.Position];
+            // vérifier que le document n'a pas de commande ni d'exemplaires attaché
+            List<Exemplaire> lesExemplaires = controle.GetExemplairesRevue(revue.Id);
+            List<Commande> lesCommandes = controle.GetCommandes(revue.Id, "revue");
+            Console.WriteLine(lesExemplaires.Count);
+            Console.WriteLine(lesCommandes.Count);
+            if(lesExemplaires.Count == 0 && lesCommandes.Count == 0){
+                // demander la confirmation de suppression
+                if (MessageBox.Show("Etes-vous sûr de supprimer la revue n°" + revue.Id + " ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    if (controle.SupprDocument(revue))
+                    {
+                        MessageBox.Show("La revue n°" + revue.Id + " est supprimée !", "Succès");
+                        lesRevues.Remove(revue);
+                        RemplirRevuesListeComplete();
+                    }
+                    else
+                    {
+                        MessageBox.Show("La revue n°" + revue.Id + " n'est pas supprimée !", "Echec");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Cette revue contient des exemplaires et/ou commandes", "Impossible à supprimer");
+            }
+         
         }
 
 
@@ -458,6 +494,7 @@ namespace Mediatek86.vue
         private void RemplirRevuesListeComplete()
         {
             RemplirRevuesListe(lesRevues);
+            bdgRevuesListe.Position = 0;
             VideRevuesZones();
         }
 
@@ -645,6 +682,43 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
+        /// événement clic sur le bouton "supprimer" dans l'onglet livres
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLivreSuppr_Click(object sender, EventArgs e)
+        {
+            Livre livre = (Livre)bdgLivresListe.List[bdgLivresListe.Position];
+            // vérifier que le document n'a pas de commande ni d'exemplaire attaché
+            List<Exemplaire> lesExemplaires = controle.GetExemplairesRevue(livre.Id);
+            List<Commande> lesCommandes = controle.GetCommandes(livre.Id, "livre");
+            Console.WriteLine(lesExemplaires.Count);
+            Console.WriteLine(lesCommandes.Count);
+            if (lesExemplaires.Count == 0 && lesCommandes.Count == 0)
+            {
+                // demander la confirmation de suppression
+                if (MessageBox.Show("Etes-vous sûr de supprimer le livre n°" + livre.Id + " ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    if (controle.SupprDocument(livre))
+                    {
+                        MessageBox.Show("Le livre n°" + livre.Id + " est supprimé !", "Succès");
+                        lesLivres.Remove(livre);
+                        RemplirLivresListeComplete();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Le livre n°" + livre.Id + " n'est pas supprimé !", "Echec");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ce livre contient des exemplaires et/ou commandes", "Impossible à supprimer");
+            }
+
+        }
+
+        /// <summary>
         /// événement click sur le btnLivreValider
         /// valider les informations saisie sur le nouveau livre, et les transmettre dans la bdd
         /// </summary>
@@ -670,13 +744,13 @@ namespace Mediatek86.vue
                         lesLivres.Add(livre);
                         lesLivres = lesLivres.OrderBy(x => x.Titre).ToList();
                         RemplirLivresListeComplete();
-                        dgvLivresListe.Rows[lesLivres.FindIndex(x => x.Id.Equals(livre.Id))].Selected = true;
-                        AfficheLivresInfos(livre);
+                        bdgLivresListe.Position = lesLivres.FindIndex(x => x.Id.Equals(livre.Id));
+
+                        //AfficheLivresInfos(livre);
                     }
                     else
                     {
                         MessageBox.Show("Le nouveau livre n°" + livre.Id + " n'est pas ajouté !", "Echec");
-
                     }
                 }
                 // mode modification
@@ -691,7 +765,7 @@ namespace Mediatek86.vue
                         {
                             lesLivres[index] = livre;
                             RemplirLivresListeComplete();
-                            dgvLivresListe.Rows[index].Selected = true;
+                            bdgLivresListe.Position = index;
                         }
                         AfficheLivresInfos(livre);
                     }
@@ -880,6 +954,7 @@ namespace Mediatek86.vue
         private void RemplirLivresListeComplete()
         {
             RemplirLivresListe(lesLivres);
+            bdgLivresListe.Position = 0;
             VideLivresZones();
         }
 
@@ -1086,6 +1161,43 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
+        /// événement clic sur le bouton "supprimer" dans l'onglet dvd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDvdSuppr_Click(object sender, EventArgs e)
+        {
+            Dvd dvd = (Dvd)bdgDvdListe.List[bdgDvdListe.Position];
+            // vérifier que le document n'a pas de commande ni d'exemplaire attaché
+            List<Exemplaire> lesExemplaires = controle.GetExemplairesRevue(dvd.Id);
+            List<Commande> lesCommandes = controle.GetCommandes(dvd.Id, "dvd");
+            Console.WriteLine(lesExemplaires.Count);
+            Console.WriteLine(lesCommandes.Count);
+            if (lesExemplaires.Count == 0 && lesCommandes.Count == 0)
+            {
+                // demander la confirmation de suppression
+                if (MessageBox.Show("Etes-vous sûr de supprimer le dvd n°" + dvd.Id + " ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    if (controle.SupprDocument(dvd))
+                    {
+                        MessageBox.Show("Le dvd n°" + dvd.Id + " est supprimé !", "Succès");
+                        lesDvd.Remove(dvd);
+                        RemplirDvdListeComplete();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Le dvd n°" + dvd.Id + " n'est pas supprimé !", "Echec");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ce dvd contient des exemplaires et/ou commandes", "Impossible à supprimer");
+            }
+
+        }
+
+        /// <summary>
         /// événement click sur le bouton "valider"
         /// valider la modification ou le nouveau dvd , et le transmettre dans la bdd
         /// </summary>
@@ -1113,13 +1225,12 @@ namespace Mediatek86.vue
                         lesDvd.Add(dvd);
                         lesDvd = lesDvd.OrderBy(x => x.Titre).ToList();
                         RemplirDvdListeComplete();
-                        dgvDvdListe.Rows[lesDvd.FindIndex(x => x.Id.Equals(dvd.Id))].Selected = true;
-                        AfficheDvdInfos(dvd);
+                        bdgDvdListe.Position=lesDvd.FindIndex(x => x.Id.Equals(dvd.Id));
+                        //AfficheDvdInfos(dvd);
                     }
                     else
                     {
                         MessageBox.Show("Le nouveau Dvd n°" + dvd.Id + " n'est pas ajouté !", "Echec");
-
                     }
                 }
 
@@ -1135,9 +1246,9 @@ namespace Mediatek86.vue
                         {
                             lesDvd[index] = dvd;
                             RemplirDvdListeComplete();
-                            dgvDvdListe.Rows[index].Selected = true;
+                            bdgDvdListe.Position = index;
                         }
-                        AfficheDvdInfos(dvd);
+                       // AfficheDvdInfos(dvd);
                     }
                     else
                     {
@@ -1339,6 +1450,7 @@ namespace Mediatek86.vue
         private void RemplirDvdListeComplete()
         {
             RemplirDvdListe(lesDvd);
+            bdgDvdListe.Position = 0;
             VideDvdZones();
         }
 
@@ -1659,6 +1771,8 @@ namespace Mediatek86.vue
 
 
 
+
         #endregion
+
     }
 }

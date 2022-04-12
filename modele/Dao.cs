@@ -236,6 +236,71 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
+        /// récupérer toutes les commandes liées à un document
+        /// </summary>
+        /// <param name="idDocument"></param>
+        /// <returns>liste d'abonnements pour revue, liste de commandeDocument pour livre/dvd</returns>
+        public static List<Commande> GetCommandes(string idDocument, string typeDocument)
+        {
+            List<Commande> lesCommandes = new List<Commande>();
+            // revue => liste Abonnement
+            if (typeDocument.Equals("revue"))
+            {
+                string req = "Select c.id, c.dateCommande, c.montant, a.dateFinAbonnement, a.idRevue ";
+                req += "from commande c join abonnement a using(id)";
+                req += "where a.idRevue = @id ";
+                req += "order by c.dateCommande DESC";
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+                {
+                    { "@id", idDocument}
+                };
+
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqSelect(req, parameters);
+
+                while (curs.Read())
+                {
+                    string id = (string)curs.Field("id");
+                    DateTime dateCommande = (DateTime)curs.Field("dateCommande");
+                    double montant = (double)curs.Field("montant");
+                    DateTime dateFinAbonnement = (DateTime)curs.Field("dateFinAbonnement");
+                    string idRevue = (string)curs.Field("idRevue");
+                    Abonnement abonnement = new Abonnement(id, dateCommande, montant, dateFinAbonnement, idRevue);
+                    lesCommandes.Add(abonnement);
+                }
+                curs.Close();                
+            }
+            // livres ou dvd => liste CommandeDocument
+            else
+            {
+                string req = "Select c.id, c.dateCommande, c.montant, cd.nbExemplaire, cd.idLivreDvd ";
+                req += "from commande c join commandeDocument cd using(id)";
+                req += "where cd.idLivreDvd = @id ";
+                req += "order by c.dateCommande DESC";
+                Dictionary<string, object> parameters = new Dictionary<string, object>
+                {
+                    { "@id", idDocument}
+                };
+
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqSelect(req, parameters);
+
+                while (curs.Read())
+                {
+                    string id = (string)curs.Field("id");
+                    DateTime dateCommande = (DateTime)curs.Field("dateCommande");
+                    double montant = (double)curs.Field("montant");
+                    int nbExemplaire = (int)curs.Field("nbExemplaire");
+                    string idLivreDvd = (string)curs.Field("idLivreDvd");
+                    CommandeDocument commandeDocument = new CommandeDocument(id, dateCommande, montant, nbExemplaire, idLivreDvd);
+                    lesCommandes.Add(commandeDocument);
+                }
+                curs.Close();
+            }
+            return lesCommandes;
+        }
+
+        /// <summary>
         /// ecriture d'un exemplaire en base de données
         /// </summary>
         /// <param name="exemplaire"></param>
@@ -455,7 +520,52 @@ namespace Mediatek86.modele
             {
                 return false;
             }
-        }       
+        }
+
+
+        /// <summary>
+        /// supprimer un document dans la bdd
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        public static bool SupprDocument(Document document)
+        {
+            string req = "DELETE FROM ";
+            switch (document)
+            {
+                case Livre _:
+                    {
+                        req += "livre";
+                        break;
+                    }
+                  case Dvd _:
+                    { req += "dvd";
+                        break;
+                    }
+                case Revue _:
+                    {
+                        req += "revue";
+                        break ;
+                    }
+            }
+            req += " WHERE id=@id";
+            Console.WriteLine(req);
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "@id", document.Id}
+            };
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqUpdate(req, parameters);
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
     }
 }

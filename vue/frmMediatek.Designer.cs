@@ -73,6 +73,7 @@ namespace Mediatek86.vue
             this.txbLivresTitreRecherche = new System.Windows.Forms.TextBox();
             this.tabDvd = new System.Windows.Forms.TabPage();
             this.grpDvdInfos = new System.Windows.Forms.GroupBox();
+            this.nudDvdDuree = new System.Windows.Forms.NumericUpDown();
             this.cbxDvdInfoRayons = new System.Windows.Forms.ComboBox();
             this.cbxDvdInfoPublics = new System.Windows.Forms.ComboBox();
             this.cbxDvdInfoGenres = new System.Windows.Forms.ComboBox();
@@ -113,6 +114,7 @@ namespace Mediatek86.vue
             this.txbDvdTitreRecherche = new System.Windows.Forms.TextBox();
             this.tabRevues = new System.Windows.Forms.TabPage();
             this.grpRevuesInfos = new System.Windows.Forms.GroupBox();
+            this.nudRevuesDelai = new System.Windows.Forms.NumericUpDown();
             this.cbxRevuesInfoGenres = new System.Windows.Forms.ComboBox();
             this.cbxRevuesInfoPublics = new System.Windows.Forms.ComboBox();
             this.cbxRevuesInfoRayons = new System.Windows.Forms.ComboBox();
@@ -187,8 +189,6 @@ namespace Mediatek86.vue
             this.label54 = new System.Windows.Forms.Label();
             this.label55 = new System.Windows.Forms.Label();
             this.btnReceptionRechercher = new System.Windows.Forms.Button();
-            this.nudDvdDuree = new System.Windows.Forms.NumericUpDown();
-            this.nudRevuesDelai = new System.Windows.Forms.NumericUpDown();
             this.tabOngletsApplication.SuspendLayout();
             this.tabLivres.SuspendLayout();
             this.grpLivresInfos.SuspendLayout();
@@ -197,11 +197,13 @@ namespace Mediatek86.vue
             ((System.ComponentModel.ISupportInitialize)(this.dgvLivresListe)).BeginInit();
             this.tabDvd.SuspendLayout();
             this.grpDvdInfos.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDvdDuree)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcbDvdImage)).BeginInit();
             this.grpDvdRecherche.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDvdListe)).BeginInit();
             this.tabRevues.SuspendLayout();
             this.grpRevuesInfos.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRevuesDelai)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcbRevuesImage)).BeginInit();
             this.grpRevuesRecherche.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRevuesListe)).BeginInit();
@@ -212,8 +214,6 @@ namespace Mediatek86.vue
             ((System.ComponentModel.ISupportInitialize)(this.pcbReceptionExemplaireRevueImage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReceptionExemplairesListe)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcbReceptionRevueImage)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDvdDuree)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRevuesDelai)).BeginInit();
             this.SuspendLayout();
             // 
             // tabOngletsApplication
@@ -553,6 +553,7 @@ namespace Mediatek86.vue
             this.btnLivreSuppr.TabIndex = 38;
             this.btnLivreSuppr.Text = "Supprimer";
             this.btnLivreSuppr.UseVisualStyleBackColor = true;
+            this.btnLivreSuppr.Click += new System.EventHandler(this.btnLivreSuppr_Click);
             // 
             // btnLivresNumRecherche
             // 
@@ -754,6 +755,19 @@ namespace Mediatek86.vue
             this.grpDvdInfos.TabIndex = 21;
             this.grpDvdInfos.TabStop = false;
             this.grpDvdInfos.Text = "Informations détaillées";
+            // 
+            // nudDvdDuree
+            // 
+            this.nudDvdDuree.Location = new System.Drawing.Point(633, 29);
+            this.nudDvdDuree.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudDvdDuree.Name = "nudDvdDuree";
+            this.nudDvdDuree.ReadOnly = true;
+            this.nudDvdDuree.Size = new System.Drawing.Size(176, 26);
+            this.nudDvdDuree.TabIndex = 45;
             // 
             // cbxDvdInfoRayons
             // 
@@ -1027,6 +1041,7 @@ namespace Mediatek86.vue
             this.btnDvdSuppr.TabIndex = 41;
             this.btnDvdSuppr.Text = "Supprimer";
             this.btnDvdSuppr.UseVisualStyleBackColor = true;
+            this.btnDvdSuppr.Click += new System.EventHandler(this.btnDvdSuppr_Click);
             // 
             // btnDvdNumRecherche
             // 
@@ -1229,6 +1244,19 @@ namespace Mediatek86.vue
             this.grpRevuesInfos.TabIndex = 20;
             this.grpRevuesInfos.TabStop = false;
             this.grpRevuesInfos.Text = "Informations détaillées";
+            // 
+            // nudRevuesDelai
+            // 
+            this.nudRevuesDelai.Location = new System.Drawing.Point(225, 146);
+            this.nudRevuesDelai.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudRevuesDelai.Name = "nudRevuesDelai";
+            this.nudRevuesDelai.ReadOnly = true;
+            this.nudRevuesDelai.Size = new System.Drawing.Size(148, 26);
+            this.nudRevuesDelai.TabIndex = 48;
             // 
             // cbxRevuesInfoGenres
             // 
@@ -1502,6 +1530,7 @@ namespace Mediatek86.vue
             this.btnRevueSuppr.TabIndex = 44;
             this.btnRevueSuppr.Text = "Supprimer";
             this.btnRevueSuppr.UseVisualStyleBackColor = true;
+            this.btnRevueSuppr.Click += new System.EventHandler(this.btnRevueSuppr_Click);
             // 
             // btnRevuesNumRecherche
             // 
@@ -2077,32 +2106,6 @@ namespace Mediatek86.vue
             this.btnReceptionRechercher.UseVisualStyleBackColor = true;
             this.btnReceptionRechercher.Click += new System.EventHandler(this.btnReceptionRechercher_Click);
             // 
-            // nudDvdDuree
-            // 
-            this.nudDvdDuree.Location = new System.Drawing.Point(633, 29);
-            this.nudDvdDuree.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudDvdDuree.Name = "nudDvdDuree";
-            this.nudDvdDuree.ReadOnly = true;
-            this.nudDvdDuree.Size = new System.Drawing.Size(176, 26);
-            this.nudDvdDuree.TabIndex = 45;
-            // 
-            // nudRevuesDelai
-            // 
-            this.nudRevuesDelai.Location = new System.Drawing.Point(225, 146);
-            this.nudRevuesDelai.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            this.nudRevuesDelai.Name = "nudRevuesDelai";
-            this.nudRevuesDelai.ReadOnly = true;
-            this.nudRevuesDelai.Size = new System.Drawing.Size(148, 26);
-            this.nudRevuesDelai.TabIndex = 48;
-            // 
             // FrmMediatek
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -2123,6 +2126,7 @@ namespace Mediatek86.vue
             this.tabDvd.ResumeLayout(false);
             this.grpDvdInfos.ResumeLayout(false);
             this.grpDvdInfos.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDvdDuree)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcbDvdImage)).EndInit();
             this.grpDvdRecherche.ResumeLayout(false);
             this.grpDvdRecherche.PerformLayout();
@@ -2130,6 +2134,7 @@ namespace Mediatek86.vue
             this.tabRevues.ResumeLayout(false);
             this.grpRevuesInfos.ResumeLayout(false);
             this.grpRevuesInfos.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudRevuesDelai)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcbRevuesImage)).EndInit();
             this.grpRevuesRecherche.ResumeLayout(false);
             this.grpRevuesRecherche.PerformLayout();
@@ -2143,8 +2148,6 @@ namespace Mediatek86.vue
             ((System.ComponentModel.ISupportInitialize)(this.pcbReceptionExemplaireRevueImage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReceptionExemplairesListe)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pcbReceptionRevueImage)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudDvdDuree)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRevuesDelai)).EndInit();
             this.ResumeLayout(false);
 
         }

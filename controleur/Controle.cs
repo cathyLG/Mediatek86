@@ -93,6 +93,12 @@ namespace Mediatek86.controleur
             return Dao.GetExemplairesRevue(idDocuement);
         }
 
+
+        public List<Commande> GetCommandes(string idDocument, string typeDocument)
+        {
+            return Dao.GetCommandes(idDocument, typeDocument);
+        }
+
         /// <summary>
         /// Crée un exemplaire d'une revue dans la bdd
         /// </summary>
@@ -122,6 +128,12 @@ namespace Mediatek86.controleur
         {
             return Dao.ModifDocument(document);
         }
+
+        public bool SupprDocument(Document document)
+        {
+            return Dao.SupprDocument(document);
+        }
+            
               
     }
 
