@@ -273,8 +273,8 @@ namespace Mediatek86.modele
             // livres ou dvd => liste CommandeDocument
             else
             {
-                string req = "Select c.id, c.dateCommande, c.montant, cd.nbExemplaire, cd.idLivreDvd ";
-                req += "from commande c join commandeDocument cd using(id)";
+                string req = "Select c.id, c.dateCommande, c.montant, cd.nbExemplaire, cd.idLivreDvd, cd.idSuivi, s.nom ";
+                req += "from commande c join commandeDocument cd using(id) join suivi s using(idSuivi)";
                 req += "where cd.idLivreDvd = @id ";
                 req += "order by c.dateCommande DESC";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
@@ -292,7 +292,9 @@ namespace Mediatek86.modele
                     double montant = (double)curs.Field("montant");
                     int nbExemplaire = (int)curs.Field("nbExemplaire");
                     string idLivreDvd = (string)curs.Field("idLivreDvd");
-                    CommandeDocument commandeDocument = new CommandeDocument(id, dateCommande, montant, nbExemplaire, idLivreDvd);
+                    string idSuivi = (string)curs.Field("idSuivi");
+                    string etapeSuivi = (string)curs.Field("nom");
+                    CommandeDocument commandeDocument = new CommandeDocument(id, dateCommande, montant, nbExemplaire, idLivreDvd, idSuivi, etapeSuivi);
                     lesCommandes.Add(commandeDocument);
                 }
                 curs.Close();
