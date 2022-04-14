@@ -303,6 +303,27 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
+        /// Retourne toutes les étapes de suivi à partir de la BDD
+        /// </summary>
+        /// <returns></returns>
+        public static List<Suivi> GetAllSuivis()
+        {
+            List<Suivi> lesSuivis = new List<Suivi>();
+            string req = "Select * from suivi ;";
+
+            BddMySql curs = BddMySql.GetInstance(connectionString);
+            curs.ReqSelect(req, null);
+
+            while (curs.Read())
+            {
+                Suivi leSuivi = new Suivi((string)curs.Field("idSuivi"), (string)curs.Field("nom"));
+                lesSuivis.Add(leSuivi);
+            }
+            curs.Close();
+            return lesSuivis;
+        }
+
+        /// <summary>
         /// ecriture d'un exemplaire en base de données
         /// </summary>
         /// <param name="exemplaire"></param>
@@ -567,6 +588,34 @@ namespace Mediatek86.modele
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// modifier l'étape de suivi d'une commande de livre/dvd dans la bdd
+        /// </summary>
+        /// <param name="idLivreDvd"></param>
+        /// <param name="idSuivi"></param>
+        /// <returns></returns>
+        public static bool UpdateSuiviCommandeDocument(string idLivreDvd, string idSuivi)
+        {
+            string req = "UPDATE commandeDocument SET idSuivi=@idSuivi WHERE id=@idLivreDvd";
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "@idSuivi", idSuivi},
+                { "@idLivreDvd", idLivreDvd }
+            };
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqUpdate(req, parameters);
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
     }

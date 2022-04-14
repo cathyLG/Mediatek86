@@ -93,10 +93,24 @@ namespace Mediatek86.controleur
             return Dao.GetExemplairesRevue(idDocuement);
         }
 
-
+        /// <summary>
+        /// récupérer toutes les commandes liées à un document
+        /// </summary>
+        /// <param name="idDocument"></param>
+        /// <param name="typeDocument"></param>
+        /// <returns></returns>
         public List<Commande> GetCommandes(string idDocument, string typeDocument)
         {
             return Dao.GetCommandes(idDocument, typeDocument);
+        }
+
+        /// <summary>
+        /// récupérer tous les suivis
+        /// </summary>
+        /// <returns></returns>
+        public List<Suivi> GetAllSuivis()
+        {
+            return Dao.GetAllSuivis();
         }
 
         /// <summary>
@@ -133,8 +147,18 @@ namespace Mediatek86.controleur
         {
             return Dao.SupprDocument(document);
         }
-            
-              
+
+        /// <summary>
+        /// modifier l'étape de suivi d'une commande de livre/dvd
+        /// </summary>
+        /// <param name="idLivreDvd"></param>
+        /// <param name="idSuivi"></param>
+        /// <returns></returns>
+        public bool UpdateSuiviCommandeDocument(string idLivreDvd, string idSuivi)
+        {
+            return Dao.UpdateSuiviCommandeDocument(idLivreDvd, idSuivi);
+        }
+
     }
 
 }

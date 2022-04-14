@@ -8,10 +8,11 @@ namespace Mediatek86.metier
 {
     public class CommandeDocument : Commande
     {
+
         private readonly int nbExemplaires;
         private readonly string idLivreDvd;
-        private readonly string idSuivi;
-        private readonly string etapeSuivi;
+        private string idSuivi;
+        private string etapeSuivi;
         public CommandeDocument(string id, DateTime dateCommande, double montant, int nbExemplaires, string idLivreDvd, string idSuivi, string etapeSuivi)
             : base(id, dateCommande, montant)
         {
@@ -21,9 +22,9 @@ namespace Mediatek86.metier
             this.etapeSuivi = etapeSuivi;
         }
 
-        public int NbExemplaires => nbExemplaires;
-        public string IdLivreDvd => idLivreDvd;
-        public string IdSuivi => idSuivi;
-        public string EtapeSuivi => etapeSuivi;
+        public int NbExemplaires { get => nbExemplaires; }
+        public string IdLivreDvd { get => idLivreDvd; }
+        public string IdSuivi { get => idSuivi; set => idSuivi = value; }
+        public string EtapeSuivi { get => etapeSuivi; set => etapeSuivi = value; }
     }
 }

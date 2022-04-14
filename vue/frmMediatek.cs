@@ -15,6 +15,7 @@ namespace Mediatek86.vue
 
         private readonly Controle controle;
         const string ETATNEUF = "00001";
+        const string TYPELIVRE = "livre";
 
         private readonly BindingSource bdgLivresListe = new BindingSource();
         private readonly BindingSource bdgDvdListe = new BindingSource();
@@ -23,6 +24,7 @@ namespace Mediatek86.vue
         private readonly BindingSource bdgRayons = new BindingSource();
         private readonly BindingSource bdgRevuesListe = new BindingSource();
         private readonly BindingSource bdgExemplairesListe = new BindingSource();
+        private readonly BindingSource bdgLivreCommandesListe = new BindingSource();
         private List<Livre> lesLivres = new List<Livre>();
         private List<Dvd> lesDvd = new List<Dvd>();
         private List<Revue> lesRevues = new List<Revue>();
@@ -30,6 +32,8 @@ namespace Mediatek86.vue
         private List<Categorie> lesGenres;
         private List<Categorie> lesPublics;
         private List<Categorie> lesRayons;
+        private List<Suivi> lesSuivis;
+        private List<CommandeDocument> lesLivreCommandes;
         private readonly BindingSource bdgInfoGenres = new BindingSource();
         private readonly BindingSource bdgInfoPublics = new BindingSource();
         private readonly BindingSource bdgInfoRayons = new BindingSource();
@@ -218,7 +222,7 @@ namespace Mediatek86.vue
             OnOffEcritureRevue(true);
             grpRevuesInfos.Text = "Nouvelle revue";
             // calculer l'id de la nouvelle revue, attention : l'id des revues commence par 1
-            txbRevuesNumero.Text = (int.Parse(lesRevues.OrderBy(o => o.Id).ToList().Last().Id) + 1).ToString();
+            txbRevuesNumero.Text = (int.Parse(lesRevues.OrderBy(o => o.Id).Last().Id) + 1).ToString();
         }
 
 
@@ -692,7 +696,7 @@ namespace Mediatek86.vue
             Livre livre = (Livre)bdgLivresListe.List[bdgLivresListe.Position];
             // vérifier que le document n'a pas de commande ni d'exemplaire attaché
             List<Exemplaire> lesExemplaires = controle.GetExemplairesRevue(livre.Id);
-            List<Commande> lesCommandes = controle.GetCommandes(livre.Id, "livre");
+            List<Commande> lesCommandes = controle.GetCommandes(livre.Id, TYPELIVRE);
             Console.WriteLine(lesExemplaires.Count);
             Console.WriteLine(lesCommandes.Count);
             if (lesExemplaires.Count == 0 && lesCommandes.Count == 0)
@@ -1790,6 +1794,7 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void tabCommandeLivre_Enter(object sender, EventArgs e)
         {
+            // remplir les deux combobox pour sélectionner l'id d'un livre
             List<string> idLivres = new List<string>();
             foreach (Livre livre in lesLivres.OrderBy(o => o.Id))
             {
@@ -1800,8 +1805,12 @@ namespace Mediatek86.vue
 
             remplirComboLivreId(idLivres, bdgSelectLivre, cbxSelectLivre);
             remplirComboLivreId(idLivres, bdgSelectLivreCommande, cbxSelectLivreCommande);
-
+            // récupérer la liste des suivis
+            lesSuivis = controle.GetAllSuivis();
+            RemplirSelectLivreInformations(null);
+            
         }
+
         /// <summary>
         /// remplir des combobox pour sélectionner un livre par id
         /// </summary>
@@ -1826,12 +1835,103 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void cbxSelectLivre_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cbxSelectLivre.SelectedIndex >= 0 )
+            if (cbxSelectLivre.SelectedIndex >= 0)
             {
                 Livre livre = lesLivres.Find(x => x.Id.Equals(cbxSelectLivre.SelectedItem.ToString()));
-                List<CommandeDocument> lesCommandedocuments = controle.GetCommandes(livre.Id, "livre").ConvertAll(c => (CommandeDocument)c) ;
-               
-                // afficher les infos détaillées du livre
+                lesLivreCommandes = controle.GetCommandes(livre.Id, TYPELIVRE).ConvertAll(c => (CommandeDocument)c);
+                RemplirSelectLivreInformations(livre);
+                RemplirLivreCommandesListe();
+            }
+        }
+
+        /// <summary>
+        /// Remplit le dategrid avec la liste reçue en paramètre
+        /// </summary>
+        private void RemplirLivreCommandesListe()
+        {
+            bdgLivreCommandesListe.DataSource = lesLivreCommandes;
+            dgvLivreCommandesListe.DataSource = bdgLivreCommandesListe;
+            
+            dgvLivreCommandesListe.Columns["idLivreDvd"].Visible = false;
+            dgvLivreCommandesListe.Columns["idSuivi"].Visible = false;
+            dgvLivreCommandesListe.Columns["id"].Visible = false;
+            dgvLivreCommandesListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dgvLivreCommandesListe.Columns["dateCommande"].DisplayIndex = 0;
+            dgvLivreCommandesListe.Columns["montant"].DisplayIndex = 1;
+            dgvLivreCommandesListe.ClearSelection();
+        }
+
+        private void dgvLivreCommandesListe_SelectionChanged(object sender, EventArgs e)
+        {
+            cbxMajSuiviCommandeLivre.Items.Clear();
+            if (dgvLivreCommandesListe.CurrentCell != null)
+            {
+                CommandeDocument commandeLivre = (CommandeDocument)bdgLivreCommandesListe.List[bdgLivreCommandesListe.Position];
+                int idsuivi = int.Parse(commandeLivre.IdSuivi);
+                // si la commande n'est pas réglée, possible de modifier le stade de suivi ou supprimer
+                if (idsuivi < lesSuivis.Count)
+                {
+                    OnOffMajCommandeLivre(true);
+                    // remplir le cbx pour mettre à jour le suivi
+                    for (int i = (idsuivi - 1); i < lesSuivis.Count; i++)
+                    {
+                        cbxMajSuiviCommandeLivre.Items.Add(lesSuivis[i].Nom);
+                    }
+                    cbxMajSuiviCommandeLivre.SelectedIndex = 0;
+                }
+                else
+                {
+                    OnOffMajCommandeLivre(false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// événement clic sur le bouton "mettre à jour le suivi" dans l'onglet "commande de livres"
+        /// Mettre à jour l'étape de suivi
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnMajSuiviCommandeLivre_Click(object sender, EventArgs e)
+        {
+            int indexCommande = bdgLivreCommandesListe.Position;
+            CommandeDocument commandeLivre = (CommandeDocument)bdgLivreCommandesListe.List[indexCommande];
+            string newEtapeSuivi = cbxMajSuiviCommandeLivre.SelectedItem.ToString();
+            string newIdSuivi = lesSuivis.Find(x => x.Nom.Equals(newEtapeSuivi)).Id;
+            if (controle.UpdateSuiviCommandeDocument(commandeLivre.Id, newIdSuivi))
+            {
+                MessageBox.Show("L'étape de suivi est mis à jour", "Succès");
+                lesLivreCommandes[indexCommande].IdSuivi = newIdSuivi;
+                lesLivreCommandes[indexCommande].EtapeSuivi = newEtapeSuivi;
+                RemplirLivreCommandesListe();
+                dgvLivreCommandesListe.Rows[indexCommande].Selected = true;
+            }
+            else
+            {
+                MessageBox.Show("L'étape de suivi n'est pas mise à jour !", "Echec");
+            }
+
+        }
+
+        /// <summary>
+        /// activer ou désactiver les boutons de modification ou suppression d'une commande livre
+        /// </summary>
+        /// <param name="acti"></param>
+        private void OnOffMajCommandeLivre(bool acti)
+        {
+            cbxMajSuiviCommandeLivre.Enabled = acti;
+            btnMajSuiviCommandeLivre.Enabled = acti;
+            btnSupprCommandeLivre.Enabled = acti;
+        }
+
+        /// <summary>
+        /// remplir les informations détaillées du livre sélectionné
+        /// </summary>
+        /// <param name="livre"></param>
+        private void RemplirSelectLivreInformations(Livre livre)
+        {
+            if (livre != null)
+            {
                 txbClNumero.Text = livre.Id;
                 txbClIsbn.Text = livre.Isbn;
                 txbClTitre.Text = livre.Titre;
@@ -1841,27 +1941,22 @@ namespace Mediatek86.vue
                 txbClPublic.Text = livre.Public;
                 txbClRayon.Text = livre.Rayon;
                 txbClImage.Text = livre.Image;
-                
-                RemplirLivreCommandesListe(lesCommandedocuments);
-            }           
+            }
+            else
+            {
+                txbClNumero.Text = "";
+                txbClIsbn.Text = "";
+                txbClTitre.Text = "";
+                txbClAuteur.Text = "";
+                txbClCollection.Text = "";
+                txbClGenre.Text = "";
+                txbClPublic.Text = "";
+                txbClRayon.Text = "";
+                txbClImage.Text = "";
+            }
+            
         }
 
-        /// <summary>
-        /// Remplit le dategrid avec la liste reçue en paramètre
-        /// </summary>
-        private void RemplirLivreCommandesListe(List<CommandeDocument> lesCommandeDocuments)
-        {
-            BindingSource bdgLivreCommandesListe = new BindingSource();
-            bdgLivreCommandesListe.DataSource = lesCommandeDocuments;
-            dgvLivreCommandesListe.DataSource = bdgLivreCommandesListe;
-            
-            dgvLivreCommandesListe.Columns["idLivreDvd"].Visible = false;            
-            dgvLivreCommandesListe.Columns["idSuivi"].Visible = false;
-            dgvLivreCommandesListe.Columns["id"].Visible = false;
-            dgvLivreCommandesListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            dgvLivreCommandesListe.Columns["dateCommande"].DisplayIndex = 0;
-            dgvLivreCommandesListe.Columns["montant"].DisplayIndex = 1;
-        }
         #endregion
 
 

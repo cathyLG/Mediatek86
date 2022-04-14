@@ -199,6 +199,9 @@ namespace Mediatek86.vue
             this.cbxSelectLivreCommande = new System.Windows.Forms.ComboBox();
             this.label68 = new System.Windows.Forms.Label();
             this.groupCommandeLivres = new System.Windows.Forms.GroupBox();
+            this.btnMajSuiviCommandeLivre = new System.Windows.Forms.Button();
+            this.btnSupprCommandeLivre = new System.Windows.Forms.Button();
+            this.cbxMajSuiviCommandeLivre = new System.Windows.Forms.ComboBox();
             this.dgvLivreCommandesListe = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txbClGenre = new System.Windows.Forms.TextBox();
@@ -2005,9 +2008,9 @@ namespace Mediatek86.vue
             this.grbNewCommandeLivre.Controls.Add(this.label69);
             this.grbNewCommandeLivre.Controls.Add(this.cbxSelectLivreCommande);
             this.grbNewCommandeLivre.Controls.Add(this.label68);
-            this.grbNewCommandeLivre.Location = new System.Drawing.Point(8, 478);
+            this.grbNewCommandeLivre.Location = new System.Drawing.Point(8, 497);
             this.grbNewCommandeLivre.Name = "grbNewCommandeLivre";
-            this.grbNewCommandeLivre.Size = new System.Drawing.Size(859, 152);
+            this.grbNewCommandeLivre.Size = new System.Drawing.Size(859, 135);
             this.grbNewCommandeLivre.TabIndex = 1;
             this.grbNewCommandeLivre.TabStop = false;
             this.grbNewCommandeLivre.Text = "Nouvelle commande de livre";
@@ -2076,6 +2079,9 @@ namespace Mediatek86.vue
             // 
             // groupCommandeLivres
             // 
+            this.groupCommandeLivres.Controls.Add(this.btnMajSuiviCommandeLivre);
+            this.groupCommandeLivres.Controls.Add(this.btnSupprCommandeLivre);
+            this.groupCommandeLivres.Controls.Add(this.cbxMajSuiviCommandeLivre);
             this.groupCommandeLivres.Controls.Add(this.dgvLivreCommandesListe);
             this.groupCommandeLivres.Controls.Add(this.groupBox1);
             this.groupCommandeLivres.Controls.Add(this.cbxSelectLivre);
@@ -2083,10 +2089,42 @@ namespace Mediatek86.vue
             this.groupCommandeLivres.Controls.Add(this.label57);
             this.groupCommandeLivres.Location = new System.Drawing.Point(8, 6);
             this.groupCommandeLivres.Name = "groupCommandeLivres";
-            this.groupCommandeLivres.Size = new System.Drawing.Size(859, 466);
+            this.groupCommandeLivres.Size = new System.Drawing.Size(859, 485);
             this.groupCommandeLivres.TabIndex = 0;
             this.groupCommandeLivres.TabStop = false;
             this.groupCommandeLivres.Text = "Recherche commande de livres";
+            // 
+            // btnMajSuiviCommandeLivre
+            // 
+            this.btnMajSuiviCommandeLivre.Enabled = false;
+            this.btnMajSuiviCommandeLivre.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMajSuiviCommandeLivre.Location = new System.Drawing.Point(159, 444);
+            this.btnMajSuiviCommandeLivre.Name = "btnMajSuiviCommandeLivre";
+            this.btnMajSuiviCommandeLivre.Size = new System.Drawing.Size(157, 22);
+            this.btnMajSuiviCommandeLivre.TabIndex = 45;
+            this.btnMajSuiviCommandeLivre.Text = "Mettre à jour le suivi";
+            this.btnMajSuiviCommandeLivre.UseVisualStyleBackColor = true;
+            this.btnMajSuiviCommandeLivre.Click += new System.EventHandler(this.btnMajSuiviCommandeLivre_Click);
+            // 
+            // btnSupprCommandeLivre
+            // 
+            this.btnSupprCommandeLivre.Enabled = false;
+            this.btnSupprCommandeLivre.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSupprCommandeLivre.Location = new System.Drawing.Point(393, 444);
+            this.btnSupprCommandeLivre.Name = "btnSupprCommandeLivre";
+            this.btnSupprCommandeLivre.Size = new System.Drawing.Size(157, 22);
+            this.btnSupprCommandeLivre.TabIndex = 44;
+            this.btnSupprCommandeLivre.Text = "Supprimer la commande";
+            this.btnSupprCommandeLivre.UseVisualStyleBackColor = true;
+            // 
+            // cbxMajSuiviCommandeLivre
+            // 
+            this.cbxMajSuiviCommandeLivre.Enabled = false;
+            this.cbxMajSuiviCommandeLivre.FormattingEnabled = true;
+            this.cbxMajSuiviCommandeLivre.Location = new System.Drawing.Point(9, 445);
+            this.cbxMajSuiviCommandeLivre.Name = "cbxMajSuiviCommandeLivre";
+            this.cbxMajSuiviCommandeLivre.Size = new System.Drawing.Size(139, 21);
+            this.cbxMajSuiviCommandeLivre.TabIndex = 40;
             // 
             // dgvLivreCommandesListe
             // 
@@ -2095,7 +2133,7 @@ namespace Mediatek86.vue
             this.dgvLivreCommandesListe.AllowUserToResizeColumns = false;
             this.dgvLivreCommandesListe.AllowUserToResizeRows = false;
             this.dgvLivreCommandesListe.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvLivreCommandesListe.Location = new System.Drawing.Point(9, 311);
+            this.dgvLivreCommandesListe.Location = new System.Drawing.Point(9, 297);
             this.dgvLivreCommandesListe.MultiSelect = false;
             this.dgvLivreCommandesListe.Name = "dgvLivreCommandesListe";
             this.dgvLivreCommandesListe.ReadOnly = true;
@@ -2104,6 +2142,7 @@ namespace Mediatek86.vue
             this.dgvLivreCommandesListe.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvLivreCommandesListe.Size = new System.Drawing.Size(844, 138);
             this.dgvLivreCommandesListe.TabIndex = 38;
+            this.dgvLivreCommandesListe.SelectionChanged += new System.EventHandler(this.dgvLivreCommandesListe_SelectionChanged);
             // 
             // groupBox1
             // 
@@ -2581,6 +2620,9 @@ namespace Mediatek86.vue
         private System.Windows.Forms.ComboBox cbxSelectLivre;
         private System.Windows.Forms.Label label58;
         private System.Windows.Forms.Label label57;
+        private System.Windows.Forms.ComboBox cbxMajSuiviCommandeLivre;
+        private System.Windows.Forms.Button btnMajSuiviCommandeLivre;
+        private System.Windows.Forms.Button btnSupprCommandeLivre;
     }
 }
 
