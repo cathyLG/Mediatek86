@@ -268,7 +268,7 @@ namespace Mediatek86.modele
                     Abonnement abonnement = new Abonnement(id, dateCommande, montant, dateFinAbonnement, idRevue);
                     lesCommandes.Add(abonnement);
                 }
-                curs.Close();                
+                curs.Close();
             }
             // livres ou dvd => liste CommandeDocument
             else
@@ -561,14 +561,15 @@ namespace Mediatek86.modele
                         req += "livre";
                         break;
                     }
-                  case Dvd _:
-                    { req += "dvd";
+                case Dvd _:
+                    {
+                        req += "dvd";
                         break;
                     }
                 case Revue _:
                     {
                         req += "revue";
-                        break ;
+                        break;
                     }
             }
             req += " WHERE id=@id";
@@ -641,6 +642,73 @@ namespace Mediatek86.modele
             catch
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// créer une commandeDocument dans la bdd
+        /// </summary>
+        /// <param name="commandeDocument"></param>
+        /// <returns></returns>
+        public static bool CreerCommandeDocument(CommandeDocument commandeDocument)
+        {
+            string req1 = "INSERT INTO commande VALUES(@id, @dateCommande, @montant)";
+            Dictionary<string, object> parameters1 = new Dictionary<string, object>
+            {
+                { "@id", commandeDocument.Id },
+                { "@dateCommande", commandeDocument.DateCommande },
+                { "@montant", commandeDocument.Montant }
+            };
+            string req2 = "INSERT INTO commandedocument VALUES(@id, @nbExemplaires, @idLivreDvd, @idSuivi)";
+            Dictionary<string, object> parameters2 = new Dictionary<string, object>
+            {
+                { "@id", commandeDocument.Id },
+                { "@nbExemplaires", commandeDocument.NbExemplaires },
+                { "@idLivreDvd", commandeDocument.IdLivreDvd },
+                { "@idSuivi", commandeDocument.IdSuivi }
+            };
+
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                Console.WriteLine("req1:******" + req1);
+                Console.WriteLine("req2:******" + req2);
+                Console.WriteLine("idlivredvd:******" + commandeDocument.IdLivreDvd);
+
+
+
+                curs.ReqUpdate(req1, parameters1);
+                curs.ReqUpdate(req2, parameters2);
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// récupérer le dernier id des commandes depuis la bdd
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLastIdCommande()
+        {
+            string req = "SELECT MAX(id) FROM commande;";
+            string lastIdCommande = "0";
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqSelect(req, null);
+                if (curs.Read())
+                {
+                    lastIdCommande = (string)curs.Field("MAX(id)");
+                }
+                curs.Close();
+                return lastIdCommande;
+            }
+            catch
+            {
+                return null;
             }
         }
 

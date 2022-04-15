@@ -191,9 +191,8 @@ namespace Mediatek86.vue
             this.btnReceptionRechercher = new System.Windows.Forms.Button();
             this.tabCommandeLivre = new System.Windows.Forms.TabPage();
             this.grbNewCommandeLivre = new System.Windows.Forms.GroupBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.btnEnregLivreCommande = new System.Windows.Forms.Button();
+            this.txbMontantCommandeLivre = new System.Windows.Forms.TextBox();
             this.label70 = new System.Windows.Forms.Label();
             this.label69 = new System.Windows.Forms.Label();
             this.cbxSelectLivreCommande = new System.Windows.Forms.ComboBox();
@@ -226,6 +225,7 @@ namespace Mediatek86.vue
             this.cbxSelectLivre = new System.Windows.Forms.ComboBox();
             this.label58 = new System.Windows.Forms.Label();
             this.label57 = new System.Windows.Forms.Label();
+            this.nudNbExemplairesCommandeLivre = new System.Windows.Forms.NumericUpDown();
             this.tabOngletsApplication.SuspendLayout();
             this.tabLivres.SuspendLayout();
             this.grpLivresInfos.SuspendLayout();
@@ -257,6 +257,7 @@ namespace Mediatek86.vue
             ((System.ComponentModel.ISupportInitialize)(this.dgvLivreCommandesListe)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNbExemplairesCommandeLivre)).BeginInit();
             this.SuspendLayout();
             // 
             // tabOngletsApplication
@@ -2001,9 +2002,9 @@ namespace Mediatek86.vue
             // 
             // grbNewCommandeLivre
             // 
-            this.grbNewCommandeLivre.Controls.Add(this.button2);
-            this.grbNewCommandeLivre.Controls.Add(this.textBox11);
-            this.grbNewCommandeLivre.Controls.Add(this.textBox10);
+            this.grbNewCommandeLivre.Controls.Add(this.nudNbExemplairesCommandeLivre);
+            this.grbNewCommandeLivre.Controls.Add(this.btnEnregLivreCommande);
+            this.grbNewCommandeLivre.Controls.Add(this.txbMontantCommandeLivre);
             this.grbNewCommandeLivre.Controls.Add(this.label70);
             this.grbNewCommandeLivre.Controls.Add(this.label69);
             this.grbNewCommandeLivre.Controls.Add(this.cbxSelectLivreCommande);
@@ -2015,29 +2016,24 @@ namespace Mediatek86.vue
             this.grbNewCommandeLivre.TabStop = false;
             this.grbNewCommandeLivre.Text = "Nouvelle commande de livre";
             // 
-            // button2
+            // btnEnregLivreCommande
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(15, 107);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(117, 22);
-            this.button2.TabIndex = 43;
-            this.button2.Text = "Enregistrer";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnEnregLivreCommande.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEnregLivreCommande.Location = new System.Drawing.Point(15, 107);
+            this.btnEnregLivreCommande.Name = "btnEnregLivreCommande";
+            this.btnEnregLivreCommande.Size = new System.Drawing.Size(117, 22);
+            this.btnEnregLivreCommande.TabIndex = 43;
+            this.btnEnregLivreCommande.Text = "Enregistrer";
+            this.btnEnregLivreCommande.UseVisualStyleBackColor = true;
+            this.btnEnregLivreCommande.Click += new System.EventHandler(this.btnEnregLivreCommande_Click);
             // 
-            // textBox11
+            // txbMontantCommandeLivre
             // 
-            this.textBox11.Location = new System.Drawing.Point(159, 81);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(207, 20);
-            this.textBox11.TabIndex = 41;
-            // 
-            // textBox10
-            // 
-            this.textBox10.Location = new System.Drawing.Point(159, 55);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(207, 20);
-            this.textBox10.TabIndex = 40;
+            this.txbMontantCommandeLivre.Location = new System.Drawing.Point(159, 81);
+            this.txbMontantCommandeLivre.Name = "txbMontantCommandeLivre";
+            this.txbMontantCommandeLivre.Size = new System.Drawing.Size(207, 20);
+            this.txbMontantCommandeLivre.TabIndex = 41;
+            this.txbMontantCommandeLivre.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txbMontantCommandeLivre_KeyPress);
             // 
             // label70
             // 
@@ -2371,6 +2367,28 @@ namespace Mediatek86.vue
             this.label57.Size = new System.Drawing.Size(0, 13);
             this.label57.TabIndex = 0;
             // 
+            // nudNbExemplairesCommandeLivre
+            // 
+            this.nudNbExemplairesCommandeLivre.Location = new System.Drawing.Point(159, 56);
+            this.nudNbExemplairesCommandeLivre.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudNbExemplairesCommandeLivre.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudNbExemplairesCommandeLivre.Name = "nudNbExemplairesCommandeLivre";
+            this.nudNbExemplairesCommandeLivre.Size = new System.Drawing.Size(207, 20);
+            this.nudNbExemplairesCommandeLivre.TabIndex = 44;
+            this.nudNbExemplairesCommandeLivre.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
             // FrmMediatek
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2421,6 +2439,7 @@ namespace Mediatek86.vue
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudNbExemplairesCommandeLivre)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2589,9 +2608,8 @@ namespace Mediatek86.vue
         private System.Windows.Forms.NumericUpDown nudRevuesDelai;
         private System.Windows.Forms.TabPage tabCommandeLivre;
         private System.Windows.Forms.GroupBox grbNewCommandeLivre;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox textBox11;
-        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.Button btnEnregLivreCommande;
+        private System.Windows.Forms.TextBox txbMontantCommandeLivre;
         private System.Windows.Forms.Label label70;
         private System.Windows.Forms.Label label69;
         private System.Windows.Forms.ComboBox cbxSelectLivreCommande;
@@ -2624,6 +2642,7 @@ namespace Mediatek86.vue
         private System.Windows.Forms.ComboBox cbxMajSuiviCommandeLivre;
         private System.Windows.Forms.Button btnMajSuiviCommandeLivre;
         private System.Windows.Forms.Button btnSupprCommandeLivre;
+        private System.Windows.Forms.NumericUpDown nudNbExemplairesCommandeLivre;
     }
 }
 

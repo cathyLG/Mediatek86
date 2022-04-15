@@ -159,11 +159,34 @@ namespace Mediatek86.controleur
             return Dao.UpdateSuiviCommandeDocument(idLivreDvd, idSuivi);
         }
 
+        /// <summary>
+        /// supprimer une commandeDocument pas encore livrée
+        /// </summary>
+        /// <param name="idCommandeDocument"></param>
+        /// <returns></returns>
         public bool SupprCommandeDocument(string idCommandeDocument)
         {
             return Dao.SupprCommandeDocument(idCommandeDocument);
         }
 
+        /// <summary>
+        /// ajouter une commandeDocument dans la bdd
+        /// </summary>
+        /// <param name="commandeDocument"></param>
+        /// <returns></returns>
+        public bool CreerCommandeDocument(CommandeDocument commandeDocument)
+        {
+            return Dao.CreerCommandeDocument(commandeDocument);
+        }
+
+        /// <summary>
+        /// récupérer le dernier id des commandes depuis la bdd
+        /// </summary>
+        /// <returns></returns>
+        public string GetLastIdCommande()
+        {
+            return Dao.GetLastIdCommande();
+        }
     }
 
 }

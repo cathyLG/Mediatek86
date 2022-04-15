@@ -1942,6 +1942,58 @@ namespace Mediatek86.vue
                 }
             }
         }
+        /// <summary>
+        /// événement clic sur le bouton "enregistrer"
+        /// créer la commande dans la bdd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnEnregLivreCommande_Click(object sender, EventArgs e)
+        {
+            // vérifier que tous les champs sont remplis
+            if(cbxSelectLivreCommande.SelectedIndex>=0 && txbMontantCommandeLivre.Text != "")
+            {
+                double montant = Convert.ToDouble(txbMontantCommandeLivre.Text);
+                Console.WriteLine("last id :*********" + controle.GetLastIdCommande());
+                string id = (int.Parse(controle.GetLastIdCommande())+1).ToString();
+                CommandeDocument commandeDocument = new CommandeDocument(id, DateTime.Today, montant,
+                   (int)nudNbExemplairesCommandeLivre.Value, cbxSelectLivreCommande.SelectedValue.ToString(), "1", "en cours");
+               if(controle.CreerCommandeDocument(commandeDocument))
+                {
+                    MessageBox.Show("La commande est créée !", "Succès");
+                }
+                else
+                {
+                    MessageBox.Show("La commande n'est pas créée !", "Echec");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Merci de remplir tous les champs");                
+            }
+        }
+
+        /// <summary>
+        /// Accepter uniquement la saisie d'un entier ou décimal dans le champs du montant
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void txbMontantCommandeLivre_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // allows 0-9, backspace, and decimal
+            if (((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != ','))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // checks to make sure only 1 decimal is allowed
+            if (e.KeyChar == ',')
+            {
+                if ((sender as TextBox).Text.IndexOf(e.KeyChar) != -1)
+                    e.Handled = true;
+            }
+        }
 
         /// <summary>
         /// activer ou désactiver les boutons de modification ou suppression d'une commande livre
@@ -1986,10 +2038,7 @@ namespace Mediatek86.vue
             }
             
         }
-
-
         #endregion
-
 
     }
 }
