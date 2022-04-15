@@ -159,6 +159,11 @@ namespace Mediatek86.controleur
             return Dao.UpdateSuiviCommandeDocument(idLivreDvd, idSuivi);
         }
 
+        public bool SupprCommandeDocument(string idCommandeDocument)
+        {
+            return Dao.SupprCommandeDocument(idCommandeDocument);
+        }
+
     }
 
 }

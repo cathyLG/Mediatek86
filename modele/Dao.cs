@@ -618,5 +618,31 @@ namespace Mediatek86.modele
 
         }
 
+        /// <summary>
+        /// supprimer une commandedocument dans la bdd
+        /// </summary>
+        /// <param name="idCommandeDocument"></param>
+        /// <returns></returns>
+        public static bool SupprCommandeDocument(string idCommandeDocument)
+        {
+            string req = "DELETE FROM commandeDocument WHERE id=@id";
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "@id", idCommandeDocument }
+            };
+
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqUpdate(req, parameters);
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }

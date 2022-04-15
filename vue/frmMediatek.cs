@@ -1840,14 +1840,14 @@ namespace Mediatek86.vue
                 Livre livre = lesLivres.Find(x => x.Id.Equals(cbxSelectLivre.SelectedItem.ToString()));
                 lesLivreCommandes = controle.GetCommandes(livre.Id, TYPELIVRE).ConvertAll(c => (CommandeDocument)c);
                 RemplirSelectLivreInformations(livre);
-                RemplirLivreCommandesListe();
+                RemplirLivreCommandesListe(lesLivreCommandes);
             }
         }
 
         /// <summary>
         /// Remplit le dategrid avec la liste reçue en paramètre
         /// </summary>
-        private void RemplirLivreCommandesListe()
+        private void RemplirLivreCommandesListe(List<CommandeDocument> lesLivreCommandes)
         {
             bdgLivreCommandesListe.DataSource = lesLivreCommandes;
             dgvLivreCommandesListe.DataSource = bdgLivreCommandesListe;
@@ -1864,14 +1864,20 @@ namespace Mediatek86.vue
         private void dgvLivreCommandesListe_SelectionChanged(object sender, EventArgs e)
         {
             cbxMajSuiviCommandeLivre.Items.Clear();
+            int idregle = lesSuivis.Count;
+            int idlivree = idregle - 1;
             if (dgvLivreCommandesListe.CurrentCell != null)
             {
                 CommandeDocument commandeLivre = (CommandeDocument)bdgLivreCommandesListe.List[bdgLivreCommandesListe.Position];
                 int idsuivi = int.Parse(commandeLivre.IdSuivi);
                 // si la commande n'est pas réglée, possible de modifier le stade de suivi ou supprimer
-                if (idsuivi < lesSuivis.Count)
+                if (idsuivi < idregle)
                 {
                     OnOffMajCommandeLivre(true);
+                    if(idsuivi >= idlivree)
+                    {
+                        btnSupprCommandeLivre.Enabled = false;
+                    }
                     // remplir le cbx pour mettre à jour le suivi
                     for (int i = (idsuivi - 1); i < lesSuivis.Count; i++)
                     {
@@ -1903,7 +1909,7 @@ namespace Mediatek86.vue
                 MessageBox.Show("L'étape de suivi est mis à jour", "Succès");
                 lesLivreCommandes[indexCommande].IdSuivi = newIdSuivi;
                 lesLivreCommandes[indexCommande].EtapeSuivi = newEtapeSuivi;
-                RemplirLivreCommandesListe();
+                RemplirLivreCommandesListe(lesLivreCommandes);
                 dgvLivreCommandesListe.Rows[indexCommande].Selected = true;
             }
             else
@@ -1911,6 +1917,30 @@ namespace Mediatek86.vue
                 MessageBox.Show("L'étape de suivi n'est pas mise à jour !", "Echec");
             }
 
+        }
+
+        /// <summary>
+        /// supprimer une commande pas encore livrée
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSupprCommandeLivre_Click(object sender, EventArgs e)
+        {
+            CommandeDocument commandeLivre = (CommandeDocument)bdgLivreCommandesListe.List[bdgLivreCommandesListe.Position];
+            if (MessageBox.Show("Etes-vous sûr de supprimer cette commande ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                if (controle.SupprCommandeDocument(commandeLivre.Id))
+                {
+                    MessageBox.Show("Commande supprimée", "Succès");
+                    lesLivreCommandes.Remove(commandeLivre);
+                    Console.WriteLine("nb commandes : *******" + lesLivreCommandes.Count);
+                    RemplirLivreCommandesListe(lesLivreCommandes);
+                }
+                else
+                {
+                    MessageBox.Show("Commande pas supprimée", "Echec");
+                }
+            }
         }
 
         /// <summary>
@@ -1956,6 +1986,7 @@ namespace Mediatek86.vue
             }
             
         }
+
 
         #endregion
 

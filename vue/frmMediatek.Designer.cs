@@ -2116,6 +2116,7 @@ namespace Mediatek86.vue
             this.btnSupprCommandeLivre.TabIndex = 44;
             this.btnSupprCommandeLivre.Text = "Supprimer la commande";
             this.btnSupprCommandeLivre.UseVisualStyleBackColor = true;
+            this.btnSupprCommandeLivre.Click += new System.EventHandler(this.btnSupprCommandeLivre_Click);
             // 
             // cbxMajSuiviCommandeLivre
             // 
