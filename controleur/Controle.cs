@@ -208,6 +208,17 @@ namespace Mediatek86.controleur
             return Dao.UpdateEtatExemplaire(idDocument, numero, idEtat);
         }
 
+        /// <summary>
+        /// supprimer un exemplaire dans la bdd
+        /// </summary>
+        /// <param name="idDocument"></param>
+        /// <param name="numero"></param>
+        /// <returns></returns>
+        public bool SupprExemplaire(string idDocument, int numero)
+        {
+            return Dao.SupprExemplaire(idDocument, numero);
+        }
+
     }
 }
 

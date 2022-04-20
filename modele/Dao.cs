@@ -738,7 +738,32 @@ namespace Mediatek86.modele
             }
         }
 
-
+        /// <summary>
+        /// supprimer un exemplaire dans la bdd
+        /// </summary>
+        /// <param name="idDocument"></param>
+        /// <param name="numero"></param>
+        /// <returns></returns>
+        public static bool SupprExemplaire(string idDocument, int numero)
+        {
+            string req = "DELETE FROM exemplaire WHERE id=@idDocument AND numero=@numero";
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "@idDocument", idDocument },
+                { "@numero", numero }
+            };
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqUpdate(req, parameters);
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
     }
 }

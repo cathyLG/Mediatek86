@@ -1052,8 +1052,8 @@ namespace Mediatek86.vue
             if (dgvLivreExemplaires.CurrentCell != null)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgLivreExemplaires.List[bdgLivreExemplaires.Position];
-                AccesMajEtatLivreExemplaire(true);
-                cbxEtatLivreExemplaire.SelectedIndex= lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
+                AccesModifEtatExemplaireLivre(true);
+                cbxEtatExemplaireLivre.SelectedIndex= lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
             }
         }
 
@@ -1064,10 +1064,10 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void btnMajEtatLivreExemplaire_Click(object sender, EventArgs e)
         {
-            if (cbxEtatLivreExemplaire.SelectedIndex >= 0)
+            if (cbxEtatExemplaireLivre.SelectedIndex >= 0)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgLivreExemplaires.List[bdgLivreExemplaires.Position];
-                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatLivreExemplaire.SelectedItem).Id))
+                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatExemplaireLivre.SelectedItem).Id))
                 {
                     MessageBox.Show("Mis à jour réussi!", "Succès");
                     lesLivreExemplaires = controle.GetExemplairesDocument(exemplaire.IdDocument);
@@ -1077,6 +1077,30 @@ namespace Mediatek86.vue
                 else
                 {
                     MessageBox.Show("Mis à jour échoué !", "Echec");
+                }
+            }
+        }
+
+        /// <summary>
+        /// énénement clic sur le bouton "supprimer" pour supprimer un exemplaire de livre
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSupprExemplaireLivre_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Êtes-vous sûr de supprimer cet exemplaire ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+
+                Exemplaire exemplaire = (Exemplaire)bdgLivreExemplaires.List[bdgLivreExemplaires.Position];
+                if (controle.SupprExemplaire(exemplaire.IdDocument, exemplaire.Numero))
+                {
+                    MessageBox.Show("Suppression réussie!", "Succès");
+                    lesLivreExemplaires = controle.GetExemplairesDocument(exemplaire.IdDocument);
+                    remplirLivreExemplairesListe(lesLivreExemplaires);
+                }
+                else
+                {
+                    MessageBox.Show("Suppression échouée !", "Echec");
                 }
             }
         }
@@ -1099,16 +1123,17 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
-        /// activer ou désactiver la possibilité de mise à jour de l'état d'un exemplaire livre 
+        /// gérer l'accès à la modification d'un exemplaire livre 
         /// </summary>
         /// <param name="acces"></param>
-        private void AccesMajEtatLivreExemplaire(bool acces)
+        private void AccesModifEtatExemplaireLivre(bool acces)
         {
-            cbxEtatLivreExemplaire.Enabled = acces;
-            btnMajEtatLivreExemplaire.Enabled = acces;
+            cbxEtatExemplaireLivre.Enabled = acces;
+            btnMajEtatExemplaireLivre.Enabled = acces;
+            btnSupprExemplaireLivre.Enabled = acces;
             if (!acces)
             {
-                cbxEtatLivreExemplaire.SelectedIndex = -1;
+                cbxEtatExemplaireLivre.SelectedIndex = -1;
             }
         }
 
@@ -1128,14 +1153,14 @@ namespace Mediatek86.vue
             dgvLivreExemplaires.Columns["DateAchat"].DisplayIndex = 0;
 
             dgvLivreExemplaires.ClearSelection();
-            AccesMajEtatLivreExemplaire(false);
+            AccesModifEtatExemplaireLivre(false);
         }
 
         private void RemplirComboLivresEtats()
         {
             bdgLivresEtats.DataSource = lesEtats;
-            cbxEtatLivreExemplaire.DataSource = bdgLivresEtats;
-            cbxEtatLivreExemplaire.SelectedIndex = -1;
+            cbxEtatExemplaireLivre.DataSource = bdgLivresEtats;
+            cbxEtatExemplaireLivre.SelectedIndex = -1;
         }
 
         #endregion
@@ -1190,8 +1215,8 @@ namespace Mediatek86.vue
         private void RemplirComboDvdEtats()
         {
             bdgDvdEtats.DataSource = lesEtats;
-            cbxEtatDvdExemplaire.DataSource = bdgDvdEtats;
-            cbxEtatDvdExemplaire.SelectedIndex = -1;
+            cbxEtatExemplaireDvd.DataSource = bdgDvdEtats;
+            cbxEtatExemplaireDvd.SelectedIndex = -1;
         }
 
         /// <summary>
@@ -1570,8 +1595,8 @@ namespace Mediatek86.vue
             if (dgvDvdExemplaires.CurrentCell != null)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgDvdExemplaires.List[bdgDvdExemplaires.Position];
-                AccesMajEtatDvdExemplaire(true);
-                cbxEtatDvdExemplaire.SelectedIndex = lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
+                AccesModifExemplaireDvd(true);
+                cbxEtatExemplaireDvd.SelectedIndex = lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
             }            
         }
 
@@ -1583,10 +1608,10 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void btnMajEtatDvdExemplaire_Click(object sender, EventArgs e)
         {
-            if (cbxEtatDvdExemplaire.SelectedIndex >= 0)
+            if (cbxEtatExemplaireDvd.SelectedIndex >= 0)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgDvdExemplaires.List[bdgDvdExemplaires.Position];
-                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatDvdExemplaire.SelectedItem).Id))
+                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatExemplaireDvd.SelectedItem).Id))
                 {
                     MessageBox.Show("Mis à jour réussi!", "Succès");
                     lesDvdExemplaires = controle.GetExemplairesDocument(exemplaire.IdDocument);
@@ -1596,6 +1621,29 @@ namespace Mediatek86.vue
                 else
                 {
                     MessageBox.Show("Mis à jour échoué !", "Echec");
+                }
+            }
+        }
+
+        /// <summary>
+        /// énénement clic sur le bouton "supprimer" pour supprimer un exemplaire de dvd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSupprExemplaireDvd_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Êtes-vous sûr de supprimer cet exemplaire ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Exemplaire exemplaire = (Exemplaire)bdgDvdExemplaires.List[bdgDvdExemplaires.Position];
+                if (controle.SupprExemplaire(exemplaire.IdDocument, exemplaire.Numero))
+                {
+                    MessageBox.Show("Suppression réussie!", "Succès");
+                    lesDvdExemplaires = controle.GetExemplairesDocument(exemplaire.IdDocument);
+                    remplirDvdExemplairesListe(lesDvdExemplaires);
+                }
+                else
+                {
+                    MessageBox.Show("Suppression échouée !", "Echec");
                 }
             }
         }
@@ -1657,7 +1705,7 @@ namespace Mediatek86.vue
             dgvDvdExemplaires.Columns["DateAchat"].DisplayIndex = 0;
 
             dgvDvdExemplaires.ClearSelection();
-            AccesMajEtatDvdExemplaire(false);
+            AccesModifExemplaireDvd(false);
         }
 
         /// <summary>
@@ -1713,13 +1761,14 @@ namespace Mediatek86.vue
         /// activer ou désactiver la possibilité de mise à jour de l'état d'un exemplaire dvd 
         /// </summary>
         /// <param name="acces"></param>
-        private void AccesMajEtatDvdExemplaire(bool acces)
+        private void AccesModifExemplaireDvd(bool acces)
         {
-            cbxEtatDvdExemplaire.Enabled = acces;
-            btnMajEtatDvdExemplaire.Enabled = acces;
+            cbxEtatExemplaireDvd.Enabled = acces;
+            btnMajEtatExemplaireDvd.Enabled = acces;
+            btnSupprExemplaireDvd.Enabled=acces;
             if (!acces)
             {
-                cbxEtatDvdExemplaire.SelectedIndex = -1;
+                cbxEtatExemplaireDvd.SelectedIndex = -1;
             }
         }
 
@@ -1758,8 +1807,8 @@ namespace Mediatek86.vue
             dgvReceptionExemplairesListe.Columns["dateAchat"].DisplayIndex = 1;
 
             dgvReceptionExemplairesListe.ClearSelection();
-            AccesMajEtatRevueExemplaire(false);
-            cbxEtatRevueExemplaire.SelectedIndex = -1;
+            AccesModifExemplaireRevue(false);
+            cbxEtatExemplaireRevue.SelectedIndex = -1;
         }
 
         /// <summary>
@@ -1979,8 +2028,8 @@ namespace Mediatek86.vue
             if (dgvReceptionExemplairesListe.CurrentCell != null)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgRevueExemplairesListe.List[bdgRevueExemplairesListe.Position];
-                AccesMajEtatRevueExemplaire(true);
-                cbxEtatRevueExemplaire.SelectedIndex = lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
+                AccesModifExemplaireRevue(true);
+                cbxEtatExemplaireRevue.SelectedIndex = lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
                 string image = exemplaire.Photo;
                 try
                 {
@@ -2004,10 +2053,10 @@ namespace Mediatek86.vue
         /// <param name="e"></param>
         private void btnMajEtatRevueExemplaire_Click(object sender, EventArgs e)
         {
-            if (cbxEtatRevueExemplaire.SelectedIndex >= 0)
+            if (cbxEtatExemplaireRevue.SelectedIndex >= 0)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgRevueExemplairesListe.List[bdgRevueExemplairesListe.Position];
-                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatRevueExemplaire.SelectedItem).Id))
+                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatExemplaireRevue.SelectedItem).Id))
                 {
                     MessageBox.Show("Mis à jour réussi!", "Succès");
                     afficheReceptionExemplairesRevue();
@@ -2021,13 +2070,41 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
-        /// gérer l'accès aux cbx et btn pour mettre à jour l'état d'une parution de revue
+        /// énénement clic sur le bouton "supprimer" pour supprimer un exemplaire de revue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnSupprExemplaireRevue_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Êtes-vous sûr de supprimer cet exemplaire ?", "Confirmation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+
+                Exemplaire exemplaire = (Exemplaire)bdgRevueExemplairesListe.List[bdgRevueExemplairesListe.Position];
+                if (controle.SupprExemplaire(exemplaire.IdDocument, exemplaire.Numero))
+                {
+                    MessageBox.Show("Suppression réussie!", "Succès");
+                    afficheReceptionExemplairesRevue();
+                }
+                else
+                {
+                    MessageBox.Show("Suppression échouée !", "Echec");
+                }
+            }
+        }
+
+        /// <summary>
+        /// gérer l'accès à la modification d'une parution de revue
         /// </summary>
         /// <param name="acces"></param>
-        private void AccesMajEtatRevueExemplaire(bool acces)
+        private void AccesModifExemplaireRevue(bool acces)
         {
-            cbxEtatRevueExemplaire.Enabled = acces;
-            btnMajEtatRevueExemplaire.Enabled = acces;
+            cbxEtatExemplaireRevue.Enabled = acces;
+            btnMajEtatExemplaireRevue.Enabled = acces;
+            btnSupprExemplaireRevue.Enabled=acces;
+            if (!acces)
+            {
+                cbxEtatExemplaireRevue.SelectedIndex = -1;
+            }
         }
 
         /// <summary>
@@ -2036,8 +2113,8 @@ namespace Mediatek86.vue
         private void RemplirComboRevuesEtats()
         {
             bdgRevuesEtats.DataSource = lesEtats;
-            cbxEtatRevueExemplaire.DataSource = bdgRevuesEtats;
-            cbxEtatRevueExemplaire.SelectedIndex = -1;
+            cbxEtatExemplaireRevue.DataSource = bdgRevuesEtats;
+            cbxEtatExemplaireRevue.SelectedIndex = -1;
         }
 
         #endregion
@@ -2115,7 +2192,7 @@ namespace Mediatek86.vue
             dgvLivreCommandesListe.Columns["montant"].DisplayIndex = 1;
 
             dgvLivreCommandesListe.ClearSelection();
-            AccesMajCommandeLivre(false);
+            AccesModifCommandeLivre(false);
             cbxSuiviCommandeLivre.SelectedIndex = -1;
         }
         /// <summary>
@@ -2139,7 +2216,7 @@ namespace Mediatek86.vue
                 // si la commande n'est pas réglée, possible de modifier le stade de suivi 
                 if (idsuivi < 4)
                 {
-                    AccesMajCommandeLivre(true);
+                    AccesModifCommandeLivre(true);
                     // impossible de supprimer une commande livrée
                     if (idsuivi >= 3)
                     {
@@ -2148,7 +2225,7 @@ namespace Mediatek86.vue
                 }
                 else
                 {
-                    AccesMajCommandeLivre(false);
+                    AccesModifCommandeLivre(false);
                 }
             }
         }
@@ -2260,7 +2337,7 @@ namespace Mediatek86.vue
         /// activer ou désactiver les boutons de modification ou suppression d'une commande livre
         /// </summary>
         /// <param name="acces"></param>
-        private void AccesMajCommandeLivre(bool acces)
+        private void AccesModifCommandeLivre(bool acces)
         {
             cbxSuiviCommandeLivre.Enabled = acces;
             btnMajSuiviCommandeLivre.Enabled = acces;
@@ -2314,6 +2391,6 @@ namespace Mediatek86.vue
 
 
         #endregion
-      
+
     }
 }
