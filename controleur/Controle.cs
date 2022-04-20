@@ -197,7 +197,16 @@ namespace Mediatek86.controleur
             return Dao.GetLastIdCommande();
         }
 
-
+        /// <summary>
+        /// mettre à jour l'état d'un exemplaire d'un document
+        /// </summary>
+        /// <param name="idDocument"></param>
+        /// <param name="idEtat"></param>
+        /// <returns></returns>
+        public bool UpdateEtatExemplaire(string idDocument, int numero, string idEtat)
+        {
+            return Dao.UpdateEtatExemplaire(idDocument, numero, idEtat);
+        }
 
     }
 }

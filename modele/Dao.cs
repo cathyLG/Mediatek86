@@ -710,7 +710,35 @@ namespace Mediatek86.modele
             }
         }
 
-        
+        /// <summary>
+        /// mettre à jour l'état d'un exemplaire d'un document
+        /// </summary>
+        /// <param name="idDocument"></param>
+        /// <param name="idEtat"></param>
+        /// <returns></returns>
+        public static bool UpdateEtatExemplaire(string idDocument, int numero, string idEtat)
+        {
+            string req = "UPDATE exemplaire SET idEtat=@idEtat WHERE id=@idDocument AND numero=@numero";
+            Dictionary<string, object> parameters = new Dictionary<string, object>()
+            {
+                { "@idDocument", idDocument },
+                { "@numero", numero },
+                { "@idEtat", idEtat }
+            };
+            try
+            {
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                curs.ReqUpdate(req, parameters);
+                curs.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
 
     }
 }
