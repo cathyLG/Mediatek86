@@ -85,12 +85,12 @@ namespace Mediatek86.controleur
         }
 
         /// <summary>
-        /// récupère les exemplaires d'une revue
+        /// récupère les exemplaires d'un document
         /// </summary>
         /// <returns>Collection d'objets Exemplaire</returns>
-        public List<Exemplaire> GetExemplairesRevue(string idDocuement)
+        public List<Exemplaire> GetExemplairesDocument(string idDocuement)
         {
-            return Dao.GetExemplairesRevue(idDocuement);
+            return Dao.GetExemplairesDocument(idDocuement);
         }
 
         /// <summary>
@@ -111,6 +111,15 @@ namespace Mediatek86.controleur
         public List<Suivi> GetAllSuivis()
         {
             return Dao.GetAllSuivis();
+        }
+
+        /// <summary>
+        /// récupérer tous les etats
+        /// </summary>
+        /// <returns></returns>
+        public List<Etat> GetAllEtats()
+        {
+            return Dao.GetAllEtats();
         }
 
         /// <summary>
@@ -154,7 +163,7 @@ namespace Mediatek86.controleur
         /// <param name="idLivreDvd"></param>
         /// <param name="idSuivi"></param>
         /// <returns></returns>
-        public bool UpdateSuiviCommandeDocument(string idLivreDvd, string idSuivi)
+        public bool UpdateSuiviCommandeDocument(int idLivreDvd, int idSuivi)
         {
             return Dao.UpdateSuiviCommandeDocument(idLivreDvd, idSuivi);
         }
@@ -164,7 +173,7 @@ namespace Mediatek86.controleur
         /// </summary>
         /// <param name="idCommandeDocument"></param>
         /// <returns></returns>
-        public bool SupprCommandeDocument(string idCommandeDocument)
+        public bool SupprCommandeDocument(int idCommandeDocument)
         {
             return Dao.SupprCommandeDocument(idCommandeDocument);
         }
@@ -183,11 +192,13 @@ namespace Mediatek86.controleur
         /// récupérer le dernier id des commandes depuis la bdd
         /// </summary>
         /// <returns></returns>
-        public string GetLastIdCommande()
+        public int GetLastIdCommande()
         {
             return Dao.GetLastIdCommande();
         }
-    }
 
+
+
+    }
 }
 

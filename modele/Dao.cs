@@ -202,16 +202,16 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
-        /// Retourne les exemplaires d'une revue
+        /// Retourne les exemplaires d'un document
         /// </summary>
         /// <returns>Liste d'objets Exemplaire</returns>
-        public static List<Exemplaire> GetExemplairesRevue(string idDocument)
+        public static List<Exemplaire> GetExemplairesDocument(string idDocument)
         {
             List<Exemplaire> lesExemplaires = new List<Exemplaire>();
-            string req = "Select e.id, e.numero, e.dateAchat, e.photo, e.idEtat ";
-            req += "from exemplaire e join document d on e.id=d.id ";
-            req += "where e.id = @id ";
-            req += "order by e.dateAchat DESC";
+            string req = "Select ex.id, ex.numero, ex.dateAchat, ex.photo, ex.idEtat, et.libelle ";
+            req += "from exemplaire ex join etat et on ex.idEtat = et.id ";
+            req += "where ex.id=@id ";
+            req += "order by ex.dateAchat DESC";
             Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "@id", idDocument}
@@ -227,8 +227,10 @@ namespace Mediatek86.modele
                 DateTime dateAchat = (DateTime)curs.Field("dateAchat");
                 string photo = (string)curs.Field("photo");
                 string idEtat = (string)curs.Field("idEtat");
-                Exemplaire exemplaire = new Exemplaire(numero, dateAchat, photo, idEtat, idDocuement);
+                string etat = (string)curs.Field("libelle");
+                Exemplaire exemplaire = new Exemplaire(numero, dateAchat, photo, idEtat, etat, idDocuement);
                 lesExemplaires.Add(exemplaire);
+                Console.WriteLine("etat : **********"+etat);
             }
             curs.Close();
 
@@ -249,7 +251,7 @@ namespace Mediatek86.modele
                 string req = "Select c.id, c.dateCommande, c.montant, a.dateFinAbonnement, a.idRevue ";
                 req += "from commande c join abonnement a using(id)";
                 req += "where a.idRevue = @id ";
-                req += "order by c.dateCommande DESC";
+                req += "order by c.dateCommande DESC, c.id DESC";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "@id", idDocument}
@@ -260,7 +262,7 @@ namespace Mediatek86.modele
 
                 while (curs.Read())
                 {
-                    string id = (string)curs.Field("id");
+                    int id = (int)curs.Field("id");
                     DateTime dateCommande = (DateTime)curs.Field("dateCommande");
                     double montant = (double)curs.Field("montant");
                     DateTime dateFinAbonnement = (DateTime)curs.Field("dateFinAbonnement");
@@ -276,7 +278,7 @@ namespace Mediatek86.modele
                 string req = "Select c.id, c.dateCommande, c.montant, cd.nbExemplaire, cd.idLivreDvd, cd.idSuivi, s.nom ";
                 req += "from commande c join commandeDocument cd using(id) join suivi s using(idSuivi)";
                 req += "where cd.idLivreDvd = @id ";
-                req += "order by c.dateCommande DESC";
+                req += "order by c.dateCommande DESC, c.id DESC";
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "@id", idDocument}
@@ -287,12 +289,12 @@ namespace Mediatek86.modele
 
                 while (curs.Read())
                 {
-                    string id = (string)curs.Field("id");
+                    int id = (int)curs.Field("id");
                     DateTime dateCommande = (DateTime)curs.Field("dateCommande");
                     double montant = (double)curs.Field("montant");
                     int nbExemplaire = (int)curs.Field("nbExemplaire");
                     string idLivreDvd = (string)curs.Field("idLivreDvd");
-                    string idSuivi = (string)curs.Field("idSuivi");
+                    int idSuivi = (int)curs.Field("idSuivi");
                     string etapeSuivi = (string)curs.Field("nom");
                     CommandeDocument commandeDocument = new CommandeDocument(id, dateCommande, montant, nbExemplaire, idLivreDvd, idSuivi, etapeSuivi);
                     lesCommandes.Add(commandeDocument);
@@ -316,19 +318,41 @@ namespace Mediatek86.modele
 
             while (curs.Read())
             {
-                Suivi leSuivi = new Suivi((string)curs.Field("idSuivi"), (string)curs.Field("nom"));
+                Suivi leSuivi = new Suivi((int)curs.Field("idSuivi"), (string)curs.Field("nom"));
                 lesSuivis.Add(leSuivi);
             }
             curs.Close();
             return lesSuivis;
         }
 
+
         /// <summary>
-        /// ecriture d'un exemplaire en base de données
+        /// récupérer tous les etats
         /// </summary>
-        /// <param name="exemplaire"></param>
-        /// <returns>true si l'insertion a pu se faire</returns>
-        public static bool CreerExemplaire(Exemplaire exemplaire)
+        /// <returns></returns>
+        public static List<Etat> GetAllEtats()
+        {
+            List<Etat> lesEtats = new List<Etat>();
+            string req = "Select * from etat ;";
+
+            BddMySql curs = BddMySql.GetInstance(connectionString);
+            curs.ReqSelect(req, null);
+
+            while (curs.Read())
+            {
+                Etat etat = new Etat((string)curs.Field("id"), (string)curs.Field("libelle"));
+                lesEtats.Add(etat);
+            }
+            curs.Close();
+            return lesEtats;
+        }
+
+            /// <summary>
+            /// ecriture d'un exemplaire en base de données
+            /// </summary>
+            /// <param name="exemplaire"></param>
+            /// <returns>true si l'insertion a pu se faire</returns>
+            public static bool CreerExemplaire(Exemplaire exemplaire)
         {
             try
             {
@@ -375,70 +399,56 @@ namespace Mediatek86.modele
             Dictionary<string, object> parameters2 = null;
             // req 3 : insert into table livre, revue ou dvd selon le type
             string req3 = null;
-            Dictionary<string, object> parameters3 = null;
+            Dictionary<string, object> parameters3 = null;           
 
-            switch (document)
+            if (document is Livre livre)
             {
-                case Livre _:
-                    {
-                        Livre livre = (Livre)document;
-
-                        req2 = "insert into livres_dvd values (@id)";
-                        parameters2 = new Dictionary<string, object>
+                req2 = "insert into livres_dvd values (@id)";
+                parameters2 = new Dictionary<string, object>
                         {
                             {"@id", livre.Id }
                         };
 
-                        req3 = "insert into livre values (@idLivre,@isbn,@auteur,@collection)";
-                        parameters3 = new Dictionary<string, object>
+                req3 = "insert into livre values (@idLivre,@isbn,@auteur,@collection)";
+                parameters3 = new Dictionary<string, object>
                             {
                                 { "@idLivre", livre.Id},
                                 { "@isbn", livre.Isbn},
                                 { "@auteur", livre.Auteur},
                                 { "@collection", livre.Collection}
                             };
-                        break;
-                    }
-
-                case Dvd _:
-                    {
-                        Dvd dvd = (Dvd)document;
-
-                        req2 = "insert into livres_dvd values (@id)";
-                        parameters2 = new Dictionary<string, object>
+            }
+            else if (document is Dvd dvd)
+            {
+                req2 = "insert into livres_dvd values (@id)";
+                parameters2 = new Dictionary<string, object>
                         {
                             {"@id", dvd.Id }
                         };
 
-                        req3 = "insert into dvd values (@idDvd,@synopsis,@realisateur,@duree)";
-                        parameters3 = new Dictionary<string, object>
+                req3 = "insert into dvd values (@idDvd,@synopsis,@realisateur,@duree)";
+                parameters3 = new Dictionary<string, object>
                             {
                                 { "@idDvd", dvd.Id},
                                 { "@synopsis", dvd.Synopsis},
                                 { "@realisateur", dvd.Realisateur},
                                 { "@duree", dvd.Duree}
                             };
-                        break;
-                    }
-
-                case Revue _:
-                    {
-                        Revue revue = (Revue)document;
-                        req3 = "insert into revue values (@idRevue, @empruntable,@periodicite,@delaiMiseADispo)";
-                        parameters3 = new Dictionary<string, object>
+            }
+            else if (document is Revue revue)
+            {
+                req3 = "insert into revue values (@idRevue, @empruntable,@periodicite,@delaiMiseADispo)";
+                parameters3 = new Dictionary<string, object>
                             {
                                 { "@idRevue", revue.Id},
                                 { "@empruntable", revue.Empruntable},
                                 { "@periodicite", revue.Periodicite},
                                 { "@delaiMiseADispo", revue.DelaiMiseADispo}
                             };
-                        break;
-                    }
             }
-            Console.WriteLine("req1 : " + req1 + "\nreq2 : " + req2 + "\nreq3 : " + req3);
+
             try
             {
-                // exécuter les deux requêtes dans une transaction
                 BddMySql curs = BddMySql.GetInstance(connectionString);
 
                 curs.ReqUpdate(req1, parameters1);
@@ -481,52 +491,40 @@ namespace Mediatek86.modele
             string req2 = null;
             Dictionary<string, object> parameters2 = null;
 
-            switch (document)
+            if (document is Livre livre)
             {
-                case Livre _:
-                    {
-                        Livre livre = (Livre)document;
-                        req2 = "UPDATE livre SET isbn=@isbn,auteur=@auteur, collection=@collection WHERE id=@idLivre";
-                        parameters2 = new Dictionary<string, object>
+                req2 = "UPDATE livre SET isbn=@isbn,auteur=@auteur, collection=@collection WHERE id=@idLivre";
+                parameters2 = new Dictionary<string, object>
                             {
                                 { "@idLivre", livre.Id},
                                 { "@isbn", livre.Isbn},
                                 { "@auteur", livre.Auteur},
                                 { "@collection", livre.Collection}
                             };
-                        break;
-                    }
-
-                case Dvd _:
-                    {
-                        Dvd dvd = (Dvd)document;
-                        req2 = "UPDATE dvd SET synopsis=@synopsis,realisateur=@realisateur,duree=@duree WHERE id=@idDvd";
-                        parameters2 = new Dictionary<string, object>
+            }
+            else if (document is Dvd dvd)
+            {
+                req2 = "UPDATE dvd SET synopsis=@synopsis,realisateur=@realisateur,duree=@duree WHERE id=@idDvd";
+                parameters2 = new Dictionary<string, object>
                             {
                                 { "@idDvd", dvd.Id},
                                 { "@synopsis", dvd.Synopsis},
                                 { "@realisateur", dvd.Realisateur},
                                 { "@duree", dvd.Duree}
                             };
-                        break;
-                    }
-
-                case Revue _:
-                    {
-                        Revue revue = (Revue)document;
-                        req2 = "UPDATE revue SET empruntable=@empruntable, periodicite=@periodicite, delaiMiseAdispo=@delaiMiseADispo ";
-                        req2 += "WHERE id=@idRevue";
-                        parameters2 = new Dictionary<string, object>
+            }
+            else if (document is Revue revue)
+            {
+                req2 = "UPDATE revue SET empruntable=@empruntable, periodicite=@periodicite, delaiMiseAdispo=@delaiMiseADispo ";
+                req2 += "WHERE id=@idRevue";
+                parameters2 = new Dictionary<string, object>
                             {
                                 { "@idRevue", revue.Id},
                                 { "@empruntable", revue.Empruntable},
                                 { "@periodicite", revue.Periodicite},
                                 { "@delaiMiseADispo", revue.DelaiMiseADispo}
                             };
-                        break;
-                    }
             }
-            Console.WriteLine("req1 : " + req1 + "\nreq2 : " + req2);
 
             //exécuter ces deux requêtes
             try
@@ -597,7 +595,7 @@ namespace Mediatek86.modele
         /// <param name="idLivreDvd"></param>
         /// <param name="idSuivi"></param>
         /// <returns></returns>
-        public static bool UpdateSuiviCommandeDocument(string idLivreDvd, string idSuivi)
+        public static bool UpdateSuiviCommandeDocument(int idLivreDvd, int idSuivi)
         {
             string req = "UPDATE commandeDocument SET idSuivi=@idSuivi WHERE id=@idLivreDvd";
             Dictionary<string, object> parameters = new Dictionary<string, object>
@@ -624,7 +622,7 @@ namespace Mediatek86.modele
         /// </summary>
         /// <param name="idCommandeDocument"></param>
         /// <returns></returns>
-        public static bool SupprCommandeDocument(string idCommandeDocument)
+        public static bool SupprCommandeDocument(int idCommandeDocument)
         {
             string req = "DELETE FROM commandeDocument WHERE id=@id";
             Dictionary<string, object> parameters = new Dictionary<string, object>
@@ -691,26 +689,28 @@ namespace Mediatek86.modele
         /// récupérer le dernier id des commandes depuis la bdd
         /// </summary>
         /// <returns></returns>
-        public static string GetLastIdCommande()
+        public static int GetLastIdCommande()
         {
             string req = "SELECT MAX(id) FROM commande;";
-            string lastIdCommande = "0";
+            int lastIdCommande = 0;
             try
             {
                 BddMySql curs = BddMySql.GetInstance(connectionString);
                 curs.ReqSelect(req, null);
                 if (curs.Read())
                 {
-                    lastIdCommande = (string)curs.Field("MAX(id)");
+                    lastIdCommande = (int)curs.Field("MAX(id)");
                 }
                 curs.Close();
                 return lastIdCommande;
             }
             catch
             {
-                return null;
+                return 0;
             }
         }
+
+        
 
     }
 }

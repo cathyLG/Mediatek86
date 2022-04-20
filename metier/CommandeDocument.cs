@@ -11,9 +11,9 @@ namespace Mediatek86.metier
 
         private readonly int nbExemplaires;
         private readonly string idLivreDvd;
-        private string idSuivi;
+        private int idSuivi;
         private string etapeSuivi;
-        public CommandeDocument(string id, DateTime dateCommande, double montant, int nbExemplaires, string idLivreDvd, string idSuivi, string etapeSuivi)
+        public CommandeDocument(int id, DateTime dateCommande, double montant, int nbExemplaires, string idLivreDvd, int idSuivi, string etapeSuivi)
             : base(id, dateCommande, montant)
         {
             this.nbExemplaires = nbExemplaires;
@@ -24,7 +24,7 @@ namespace Mediatek86.metier
 
         public int NbExemplaires { get => nbExemplaires; }
         public string IdLivreDvd { get => idLivreDvd; }
-        public string IdSuivi { get => idSuivi; set => idSuivi = value; }
+        public int IdSuivi { get => idSuivi; set => idSuivi = value; }
         public string EtapeSuivi { get => etapeSuivi; set => etapeSuivi = value; }
     }
 }
