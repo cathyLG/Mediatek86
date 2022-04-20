@@ -26,15 +26,16 @@ namespace Mediatek86.vue
         private readonly BindingSource bdgRayons = new BindingSource();
         private readonly BindingSource bdgLivresEtats = new BindingSource();
         private readonly BindingSource bdgDvdEtats = new BindingSource();
+        private readonly BindingSource bdgRevuesEtats = new BindingSource();
         private readonly BindingSource bdgRevuesListe = new BindingSource();
-        private readonly BindingSource bdgExemplairesListe = new BindingSource();
+        private readonly BindingSource bdgRevueExemplairesListe = new BindingSource();
         private readonly BindingSource bdgLivreCommandesListe = new BindingSource();
         private readonly BindingSource bdgLivreExemplaires = new BindingSource();
         private readonly BindingSource bdgDvdExemplaires = new BindingSource();        
         private List<Livre> lesLivres = new List<Livre>();
         private List<Dvd> lesDvd = new List<Dvd>();
         private List<Revue> lesRevues = new List<Revue>();
-        private List<Exemplaire> lesExemplaires = new List<Exemplaire>();
+        private List<Exemplaire> lesRevueExemplaires = new List<Exemplaire>();
         private List<Categorie> lesGenres;
         private List<Categorie> lesPublics;
         private List<Categorie> lesRayons;
@@ -199,9 +200,9 @@ namespace Mediatek86.vue
         {
             grpRevuesInfos.Text = "Informations détaillées";
             revueEnModif = false;
-            OnOffEcritureRevue(false);
+            AccesEcritureRevue(false);
 
-            OnOffEcritureRevue(false);
+            AccesEcritureRevue(false);
             txbRevuesPeriodicite.Text = revue.Periodicite;
             chkRevuesEmpruntable.Checked = revue.Empruntable;
             txbRevuesImage.Text = revue.Image;
@@ -231,7 +232,7 @@ namespace Mediatek86.vue
             dgvRevuesListe.ClearSelection();
             VideRevuesInfos();
             VideRevuesZones();
-            OnOffEcritureRevue(true);
+            AccesEcritureRevue(true);
             grpRevuesInfos.Text = "Nouvelle revue";
             // calculer l'id de la nouvelle revue, attention : l'id des revues commence par 1
             txbRevuesNumero.Text = (int.Parse(lesRevues.OrderBy(o => o.Id).Last().Id) + 1).ToString();
@@ -309,7 +310,7 @@ namespace Mediatek86.vue
         private void btnRevueModif_Click(object sender, EventArgs e)
         {
             revueEnModif = true;
-            OnOffEcritureRevue(true);
+            AccesEcritureRevue(true);
             grpRevuesInfos.Text = "Modification";
         }
 
@@ -367,18 +368,18 @@ namespace Mediatek86.vue
         /// <summary>
         /// activer ou désactiver la saisie dans les champs (sauf id) des informations détaillées
         /// </summary>
-        /// <param name="acti"></param>
-        private void OnOffEcritureRevue(bool acti)
+        /// <param name="acces"></param>
+        private void AccesEcritureRevue(bool acces)
         {
-            chkRevuesEmpruntable.Enabled = acti;
-            txbRevuesTitre.ReadOnly = !acti;
-            txbRevuesPeriodicite.ReadOnly = !acti;
-            nudRevuesDelai.ReadOnly = !acti;
-            cbxRevuesInfoGenres.Enabled = acti;
-            cbxRevuesInfoPublics.Enabled = acti;
-            cbxRevuesInfoRayons.Enabled = acti;
-            txbRevuesImage.ReadOnly = !acti;
-            btnRevueValider.Enabled = acti;
+            chkRevuesEmpruntable.Enabled = acces;
+            txbRevuesTitre.ReadOnly = !acces;
+            txbRevuesPeriodicite.ReadOnly = !acces;
+            nudRevuesDelai.ReadOnly = !acces;
+            cbxRevuesInfoGenres.Enabled = acces;
+            cbxRevuesInfoPublics.Enabled = acces;
+            cbxRevuesInfoRayons.Enabled = acces;
+            txbRevuesImage.ReadOnly = !acces;
+            btnRevueValider.Enabled = acces;
         }
 
         /// <summary>
@@ -678,7 +679,7 @@ namespace Mediatek86.vue
             bdgLivreExemplaires.DataSource = null;
             VideLivresInfos();
             VideLivresZones();
-            OnOffEcritureLivres(true);
+            AccesEcritureLivres(true);
             grpLivresInfos.Text = "Nouveau livre";
             // calculer l'id du nouveau livre, attention : l'id des livres commence par 0
             string lastId = lesLivres.OrderBy(o => o.Id).Last().Id;
@@ -690,7 +691,7 @@ namespace Mediatek86.vue
         private void btnLivreModif_Click(object sender, EventArgs e)
         {
             livreEnModif = true;
-            OnOffEcritureLivres(true);
+            AccesEcritureLivres(true);
             grpLivresInfos.Text = "Modification";
         }
 
@@ -798,7 +799,7 @@ namespace Mediatek86.vue
         {
             grpLivresInfos.Text = "Informations détaillées";
             livreEnModif = false;
-            OnOffEcritureLivres(false);
+            AccesEcritureLivres(false);
 
             txbLivresAuteur.Text = livre.Auteur;
             txbLivresCollection.Text = livre.Collection;
@@ -1051,7 +1052,7 @@ namespace Mediatek86.vue
             if (dgvLivreExemplaires.CurrentCell != null)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgLivreExemplaires.List[bdgLivreExemplaires.Position];
-                OnOffMajEtatLivreExemplaire(true);
+                AccesMajEtatLivreExemplaire(true);
                 cbxEtatLivreExemplaire.SelectedIndex= lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
             }
         }
@@ -1083,29 +1084,29 @@ namespace Mediatek86.vue
         /// <summary>
         /// activer ou désactiver la saisie dans les champs (sauf id) des informations détaillées
         /// </summary>
-        /// <param name="acti"></param>
-        private void OnOffEcritureLivres(bool acti)
+        /// <param name="acces"></param>
+        private void AccesEcritureLivres(bool acces)
         {
-            txbLivresIsbn.ReadOnly = !acti;
-            txbLivresTitre.ReadOnly = !acti;
-            txbLivresAuteur.ReadOnly = !acti;
-            txbLivresCollection.ReadOnly = !acti;
-            txbLivresImage.ReadOnly = !acti;
-            cbxLivresInfoGenres.Enabled = acti;
-            cbxLivresInfoPublics.Enabled = acti;
-            cbxLivresInfoRayons.Enabled = acti;
-            btnLivreValider.Enabled = acti;
+            txbLivresIsbn.ReadOnly = !acces;
+            txbLivresTitre.ReadOnly = !acces;
+            txbLivresAuteur.ReadOnly = !acces;
+            txbLivresCollection.ReadOnly = !acces;
+            txbLivresImage.ReadOnly = !acces;
+            cbxLivresInfoGenres.Enabled = acces;
+            cbxLivresInfoPublics.Enabled = acces;
+            cbxLivresInfoRayons.Enabled = acces;
+            btnLivreValider.Enabled = acces;
         }
 
         /// <summary>
         /// activer ou désactiver la possibilité de mise à jour de l'état d'un exemplaire livre 
         /// </summary>
-        /// <param name="acti"></param>
-        private void OnOffMajEtatLivreExemplaire(bool acti)
+        /// <param name="acces"></param>
+        private void AccesMajEtatLivreExemplaire(bool acces)
         {
-            cbxEtatLivreExemplaire.Enabled = acti;
-            btnMajEtatLivreExemplaire.Enabled = acti;
-            if (!acti)
+            cbxEtatLivreExemplaire.Enabled = acces;
+            btnMajEtatLivreExemplaire.Enabled = acces;
+            if (!acces)
             {
                 cbxEtatLivreExemplaire.SelectedIndex = -1;
             }
@@ -1127,7 +1128,7 @@ namespace Mediatek86.vue
             dgvLivreExemplaires.Columns["DateAchat"].DisplayIndex = 0;
 
             dgvLivreExemplaires.ClearSelection();
-            OnOffMajEtatLivreExemplaire(false);
+            AccesMajEtatLivreExemplaire(false);
         }
 
         private void RemplirComboLivresEtats()
@@ -1182,6 +1183,7 @@ namespace Mediatek86.vue
             dgvDvdListe.Columns["id"].DisplayIndex = 0;
             dgvDvdListe.Columns["titre"].DisplayIndex = 1;
         }
+
         /// <summary>
         /// remplir le combobox des états d'exemplaire de dvd
         /// </summary>
@@ -1191,6 +1193,7 @@ namespace Mediatek86.vue
             cbxEtatDvdExemplaire.DataSource = bdgDvdEtats;
             cbxEtatDvdExemplaire.SelectedIndex = -1;
         }
+
         /// <summary>
         /// Recherche et affichage du Dvd dont on a saisi le numéro.
         /// Si non trouvé, affichage d'un MessageBox.
@@ -1264,7 +1267,7 @@ namespace Mediatek86.vue
             dgvDvdListe.ClearSelection();
             VideDvdInfos();
             VideDvdZones();
-            OnOffEcritureDvd(true);
+            AccesEcritureDvd(true);
             grpDvdInfos.Text = "Nouveau Dvd";
             // calculer l'id du nouveau Dvd, attention : l'id des livres commence par 2
             txbDvdNumero.Text = (int.Parse(lesDvd.OrderBy(o => o.Id).Last().Id) + 1).ToString();
@@ -1279,7 +1282,7 @@ namespace Mediatek86.vue
         private void btnDvdModif_Click(object sender, EventArgs e)
         {
             dvdEnModif = true;
-            OnOffEcritureDvd(true);
+            AccesEcritureDvd(true);
             grpDvdInfos.Text = "Modification";
         }
 
@@ -1388,7 +1391,7 @@ namespace Mediatek86.vue
         {
             grpDvdInfos.Text = "Informations détaillées";
             dvdEnModif = false;
-            OnOffEcritureDvd(false);
+            AccesEcritureDvd(false);
 
             txbDvdRealisateur.Text = dvd.Realisateur;
             txbDvdSynopsis.Text = dvd.Synopsis;
@@ -1429,18 +1432,18 @@ namespace Mediatek86.vue
         /// <summary>
         /// activer ou désactiver la saisie dans les champs (sauf id) des informations détaillées
         /// </summary>
-        /// <param name="acti"></param>
-        private void OnOffEcritureDvd(bool acti)
+        /// <param name="acces"></param>
+        private void AccesEcritureDvd(bool acces)
         {
-            nudDvdDuree.ReadOnly = !acti;
-            txbDvdTitre.ReadOnly = !acti;
-            txbDvdRealisateur.ReadOnly = !acti;
-            txbDvdSynopsis.ReadOnly = !acti;
-            cbxDvdInfoGenres.Enabled = acti;
-            cbxDvdInfoPublics.Enabled = acti;
-            cbxDvdInfoRayons.Enabled = acti;
-            txbDvdImage.ReadOnly = !acti;
-            btnDvdValider.Enabled = acti;
+            nudDvdDuree.ReadOnly = !acces;
+            txbDvdTitre.ReadOnly = !acces;
+            txbDvdRealisateur.ReadOnly = !acces;
+            txbDvdSynopsis.ReadOnly = !acces;
+            cbxDvdInfoGenres.Enabled = acces;
+            cbxDvdInfoPublics.Enabled = acces;
+            cbxDvdInfoRayons.Enabled = acces;
+            txbDvdImage.ReadOnly = !acces;
+            btnDvdValider.Enabled = acces;
         }
 
         /// <summary>
@@ -1567,7 +1570,7 @@ namespace Mediatek86.vue
             if (dgvDvdExemplaires.CurrentCell != null)
             {
                 Exemplaire exemplaire = (Exemplaire)bdgDvdExemplaires.List[bdgDvdExemplaires.Position];
-                OnOffMajEtatDvdExemplaire(true);
+                AccesMajEtatDvdExemplaire(true);
                 cbxEtatDvdExemplaire.SelectedIndex = lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
             }            
         }
@@ -1654,7 +1657,7 @@ namespace Mediatek86.vue
             dgvDvdExemplaires.Columns["DateAchat"].DisplayIndex = 0;
 
             dgvDvdExemplaires.ClearSelection();
-            OnOffMajEtatDvdExemplaire(false);
+            AccesMajEtatDvdExemplaire(false);
         }
 
         /// <summary>
@@ -1709,12 +1712,12 @@ namespace Mediatek86.vue
         /// <summary>
         /// activer ou désactiver la possibilité de mise à jour de l'état d'un exemplaire dvd 
         /// </summary>
-        /// <param name="acti"></param>
-        private void OnOffMajEtatDvdExemplaire(bool acti)
+        /// <param name="acces"></param>
+        private void AccesMajEtatDvdExemplaire(bool acces)
         {
-            cbxEtatDvdExemplaire.Enabled = acti;
-            btnMajEtatDvdExemplaire.Enabled = acti;
-            if (!acti)
+            cbxEtatDvdExemplaire.Enabled = acces;
+            btnMajEtatDvdExemplaire.Enabled = acces;
+            if (!acces)
             {
                 cbxEtatDvdExemplaire.SelectedIndex = -1;
             }
@@ -1736,6 +1739,7 @@ namespace Mediatek86.vue
         private void tabReceptionRevue_Enter(object sender, EventArgs e)
         {
             lesRevues = controle.GetAllRevues();
+            RemplirComboRevuesEtats();
             accesReceptionExemplaireGroupBox(false);
         }
 
@@ -1744,13 +1748,18 @@ namespace Mediatek86.vue
         /// </summary>
         private void RemplirReceptionExemplairesListe(List<Exemplaire> exemplaires)
         {
-            bdgExemplairesListe.DataSource = exemplaires;
-            dgvReceptionExemplairesListe.DataSource = bdgExemplairesListe;
+            bdgRevueExemplairesListe.DataSource = exemplaires;
+            dgvReceptionExemplairesListe.DataSource = bdgRevueExemplairesListe;
             dgvReceptionExemplairesListe.Columns["idEtat"].Visible = false;
             dgvReceptionExemplairesListe.Columns["idDocument"].Visible = false;
+            dgvReceptionExemplairesListe.Columns["photo"].Visible = false;
             dgvReceptionExemplairesListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvReceptionExemplairesListe.Columns["numero"].DisplayIndex = 0;
             dgvReceptionExemplairesListe.Columns["dateAchat"].DisplayIndex = 1;
+
+            dgvReceptionExemplairesListe.ClearSelection();
+            AccesMajEtatRevueExemplaire(false);
+            cbxEtatRevueExemplaire.SelectedIndex = -1;
         }
 
         /// <summary>
@@ -1825,8 +1834,8 @@ namespace Mediatek86.vue
         private void afficheReceptionExemplairesRevue()
         {
             string idDocuement = txbReceptionRevueNumero.Text;
-            lesExemplaires = controle.GetExemplairesDocument(idDocuement);
-            RemplirReceptionExemplairesListe(lesExemplaires);
+            lesRevueExemplaires = controle.GetExemplairesDocument(idDocuement);
+            RemplirReceptionExemplairesListe(lesRevueExemplaires);
         }
 
         /// <summary>
@@ -1843,8 +1852,8 @@ namespace Mediatek86.vue
             txbReceptionRevueRayon.Text = "";
             txbReceptionRevueTitre.Text = "";
             pcbReceptionRevueImage.Image = null;
-            lesExemplaires = new List<Exemplaire>();
-            RemplirReceptionExemplairesListe(lesExemplaires);
+            lesRevueExemplaires = new List<Exemplaire>();
+            RemplirReceptionExemplairesListe(lesRevueExemplaires);
             accesReceptionExemplaireGroupBox(false);
         }
 
@@ -1948,13 +1957,13 @@ namespace Mediatek86.vue
             switch (titreColonne)
             {
                 case "Numero":
-                    sortedList = lesExemplaires.OrderBy(o => o.Numero).Reverse().ToList();
+                    sortedList = lesRevueExemplaires.OrderBy(o => o.Numero).Reverse().ToList();
                     break;
                 case "DateAchat":
-                    sortedList = lesExemplaires.OrderBy(o => o.DateAchat).Reverse().ToList();
+                    sortedList = lesRevueExemplaires.OrderBy(o => o.DateAchat).Reverse().ToList();
                     break;
                 case "Photo":
-                    sortedList = lesExemplaires.OrderBy(o => o.Photo).ToList();
+                    sortedList = lesRevueExemplaires.OrderBy(o => o.Photo).ToList();
                     break;
             }
             RemplirReceptionExemplairesListe(sortedList);
@@ -1969,7 +1978,9 @@ namespace Mediatek86.vue
         {
             if (dgvReceptionExemplairesListe.CurrentCell != null)
             {
-                Exemplaire exemplaire = (Exemplaire)bdgExemplairesListe.List[bdgExemplairesListe.Position];
+                Exemplaire exemplaire = (Exemplaire)bdgRevueExemplairesListe.List[bdgRevueExemplairesListe.Position];
+                AccesMajEtatRevueExemplaire(true);
+                cbxEtatRevueExemplaire.SelectedIndex = lesEtats.FindIndex(x => x.Id.Equals(exemplaire.IdEtat));
                 string image = exemplaire.Photo;
                 try
                 {
@@ -1986,9 +1997,48 @@ namespace Mediatek86.vue
             }
         }
 
+        /// <summary>
+        /// énénement clic sur le bonton "mettre à jour l'état" pour un exemplaire d'un dvd
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnMajEtatRevueExemplaire_Click(object sender, EventArgs e)
+        {
+            if (cbxEtatRevueExemplaire.SelectedIndex >= 0)
+            {
+                Exemplaire exemplaire = (Exemplaire)bdgRevueExemplairesListe.List[bdgRevueExemplairesListe.Position];
+                if (controle.UpdateEtatExemplaire(exemplaire.IdDocument, exemplaire.Numero, ((Etat)cbxEtatRevueExemplaire.SelectedItem).Id))
+                {
+                    MessageBox.Show("Mis à jour réussi!", "Succès");
+                    afficheReceptionExemplairesRevue();
+                    dgvReceptionExemplairesListe.Rows[lesRevueExemplaires.FindIndex(x => x.Numero.Equals(exemplaire.Numero))].Selected = true;
+                }
+                else
+                {
+                    MessageBox.Show("Mis à jour échoué !", "Echec");
+                }
+            }
+        }
 
+        /// <summary>
+        /// gérer l'accès aux cbx et btn pour mettre à jour l'état d'une parution de revue
+        /// </summary>
+        /// <param name="acces"></param>
+        private void AccesMajEtatRevueExemplaire(bool acces)
+        {
+            cbxEtatRevueExemplaire.Enabled = acces;
+            btnMajEtatRevueExemplaire.Enabled = acces;
+        }
 
-
+        /// <summary>
+        /// remplir le combobox des états d'exemplaire de revue
+        /// </summary>
+        private void RemplirComboRevuesEtats()
+        {
+            bdgRevuesEtats.DataSource = lesEtats;
+            cbxEtatRevueExemplaire.DataSource = bdgRevuesEtats;
+            cbxEtatRevueExemplaire.SelectedIndex = -1;
+        }
 
         #endregion
 
@@ -2065,7 +2115,7 @@ namespace Mediatek86.vue
             dgvLivreCommandesListe.Columns["montant"].DisplayIndex = 1;
 
             dgvLivreCommandesListe.ClearSelection();
-            OnOffMajCommandeLivre(false);
+            AccesMajCommandeLivre(false);
             cbxSuiviCommandeLivre.SelectedIndex = -1;
         }
         /// <summary>
@@ -2089,7 +2139,7 @@ namespace Mediatek86.vue
                 // si la commande n'est pas réglée, possible de modifier le stade de suivi 
                 if (idsuivi < 4)
                 {
-                    OnOffMajCommandeLivre(true);
+                    AccesMajCommandeLivre(true);
                     // impossible de supprimer une commande livrée
                     if (idsuivi >= 3)
                     {
@@ -2098,7 +2148,7 @@ namespace Mediatek86.vue
                 }
                 else
                 {
-                    OnOffMajCommandeLivre(false);
+                    AccesMajCommandeLivre(false);
                 }
             }
         }
@@ -2209,12 +2259,12 @@ namespace Mediatek86.vue
         /// <summary>
         /// activer ou désactiver les boutons de modification ou suppression d'une commande livre
         /// </summary>
-        /// <param name="acti"></param>
-        private void OnOffMajCommandeLivre(bool acti)
+        /// <param name="acces"></param>
+        private void AccesMajCommandeLivre(bool acces)
         {
-            cbxSuiviCommandeLivre.Enabled = acti;
-            btnMajSuiviCommandeLivre.Enabled = acti;
-            btnSupprCommandeLivre.Enabled = acti;
+            cbxSuiviCommandeLivre.Enabled = acces;
+            btnMajSuiviCommandeLivre.Enabled = acces;
+            btnSupprCommandeLivre.Enabled = acces;
         }
 
         /// <summary>
@@ -2264,5 +2314,6 @@ namespace Mediatek86.vue
 
 
         #endregion
+      
     }
 }
