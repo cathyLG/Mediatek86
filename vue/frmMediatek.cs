@@ -14,6 +14,8 @@ namespace Mediatek86.vue
         #region Variables globales
 
         private readonly Controle controle;
+        private readonly int idService;
+
         const string ETATNEUF = "00001";
         const string TYPELIVRE = "livre";
         const string TYPEREVUE = "revue";
@@ -55,10 +57,11 @@ namespace Mediatek86.vue
         #endregion
 
 
-        internal FrmMediatek(Controle controle)
+        internal FrmMediatek(Controle controle, int idService)
         {
             InitializeComponent();
             this.controle = controle;
+            this.idService = idService;
             lesGenres = this.controle.GetAllGenres();
             lesPublics = this.controle.GetAllPublics();
             lesRayons = this.controle.GetAllRayons();

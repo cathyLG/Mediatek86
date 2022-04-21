@@ -6,8 +6,9 @@ using Mediatek86.vue;
 
 namespace Mediatek86.controleur
 {
-    internal class Controle
+    public class Controle
     {
+        private readonly FrmAuthentification frmAuthentification;
         private readonly List<Livre> lesLivres;
         private readonly List<Dvd> lesDvd;
         private readonly List<Revue> lesRevues;
@@ -26,8 +27,30 @@ namespace Mediatek86.controleur
             lesGenres = Dao.GetAllGenres();
             lesRayons = Dao.GetAllRayons();
             lesPublics = Dao.GetAllPublics();
-            FrmMediatek frmMediatek = new FrmMediatek(this);
+            frmAuthentification = new FrmAuthentification(this);
+            frmAuthentification.ShowDialog();
+            /*FrmMediatek frmMediatek = new FrmMediatek(this);
             frmMediatek.ShowDialog();
+            */
+        }
+
+        /// <summary>
+        /// Demande la vérification de l'authentification
+        /// Si correct et habillié, alors ouvre la fenêtre principale
+        /// </summary>
+        /// <param name="nom"></param>
+        /// <param name="prenom"></param>
+        /// <param name="mdp"></param>
+        /// <returns></returns>
+        public int ControleAuthentification(string nom, string prenom, string mdp)
+        {
+            int idService = Dao.ControleAuthentification(nom, prenom, mdp);
+            if (idService >1)
+            {
+                frmAuthentification.Hide();
+                (new FrmMediatek(this, idService)).ShowDialog();
+            }
+            return idService;
         }
 
         /// <summary>

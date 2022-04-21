@@ -16,6 +16,35 @@ namespace Mediatek86.modele
         private static readonly string connectionString = "server=" + server + ";user id=" + userid + ";password=" + password + ";database=" + database + ";SslMode=none";
 
         /// <summary>
+        /// contrôler l'authentification des utilisateurs
+        /// </summary>
+        /// <param name="nom"></param>
+        /// <param name="prenom"></param>
+        /// <param name="mdp"></param>
+        /// <returns>0 si authentification échouée, idService de l'utilisateur si authentification réussie</returns>
+        public static int ControleAuthentification(string nom, string prenom, string mdp)
+        {
+            int idService = 0;
+            string req = "select * from utilisateur ";
+            req += "where nom=@nom and prenom=@prenom and mdp=SHA2(@mdp, 256) ;";
+            Dictionary<string, object> parameters = new Dictionary<string, object>
+            {
+                { "@nom", nom },
+                { "@prenom", prenom },
+                { "@mdp", mdp }
+            };
+            BddMySql curs = BddMySql.GetInstance(connectionString);
+            curs.ReqSelect(req, parameters);
+            if (curs.Read())
+            {
+                idService = (int)curs.Field("idService");
+            }
+            curs.Close();
+
+            return idService;
+        }
+
+        /// <summary>
         /// Retourne tous les genres à partir de la BDD
         /// </summary>
         /// <returns>Liste d'objets Genre</returns>
