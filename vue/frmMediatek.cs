@@ -14,12 +14,12 @@ namespace Mediatek86.vue
         #region Variables globales
 
         private readonly Controle controle;
-        private readonly int idService;
 
         const string ETATNEUF = "00001";
         const string TYPELIVRE = "livre";
         const string TYPEREVUE = "revue";
         const string TYPEDVD = "dvd";
+        const int IDMIN_GESTION = 3;
 
         private readonly BindingSource bdgLivresListe = new BindingSource();
         private readonly BindingSource bdgDvdListe = new BindingSource();
@@ -61,7 +61,7 @@ namespace Mediatek86.vue
         {
             InitializeComponent();
             this.controle = controle;
-            this.idService = idService;
+            DroitGestionCatalogue(idService >= IDMIN_GESTION);
             lesGenres = this.controle.GetAllGenres();
             lesPublics = this.controle.GetAllPublics();
             lesRayons = this.controle.GetAllRayons();
@@ -85,6 +85,49 @@ namespace Mediatek86.vue
             {
                 cbx.SelectedIndex = -1;
             }
+        }
+
+        /// <summary>
+        /// gérer le droit de mise à jour du catalogue (Livre/dvd/revue)
+        /// </summary>
+        /// <param name="droit"></param>
+        private void DroitGestionCatalogue(bool droit)
+        {
+            // onglet livre
+            btnLivreAjout.Visible = droit;
+            btnLivreModif.Visible = droit;
+            btnLivreSuppr.Visible = droit;
+            btnLivreValider.Visible = droit;
+            cbxEtatExemplaireLivre.Visible = droit;
+            btnMajEtatExemplaireLivre.Visible = droit;
+            btnSupprExemplaireLivre.Visible = (droit);
+
+            // onglet dvd
+            btnDvdAjout.Visible = droit;
+            btnDvdModif.Visible = droit;
+            btnDvdSuppr.Visible = droit;
+            btnDvdValider.Visible = droit;
+            cbxEtatExemplaireDvd.Visible = droit;
+            btnMajEtatExemplaireDvd.Visible = droit;
+            btnSupprExemplaireDvd.Visible = (droit);
+
+            // onglet revue
+            btnRevueAjout.Visible = droit;
+            btnRevueModif.Visible = droit;
+            btnRevueSuppr.Visible = droit;
+            btnRevueValider.Visible = droit;
+
+            // onglet parution des revues
+            cbxEtatExemplaireRevue.Visible = droit;
+            btnMajEtatExemplaireRevue.Visible = droit;
+            btnSupprExemplaireRevue.Visible = droit;
+            grpReceptionExemplaire.Visible = droit;
+
+            // onglet commande de livres
+            cbxSuiviCommandeLivre.Visible = droit;
+            btnMajSuiviCommandeLivre.Visible = droit;
+            btnSupprCommandeLivre.Visible = droit;
+            grbNouvelleCommandeLivre.Visible = droit;
         }
 
         #endregion
@@ -1166,6 +1209,8 @@ namespace Mediatek86.vue
             cbxEtatExemplaireLivre.SelectedIndex = -1;
         }
 
+       
+
         #endregion
 
 
@@ -1546,7 +1591,7 @@ namespace Mediatek86.vue
                     Dvd dvd = (Dvd)bdgDvdListe.List[bdgDvdListe.Position];
                     AfficheDvdInfos(dvd);
                     lesDvdExemplaires = controle.GetExemplairesDocument(dvd.Id);
-                    remplirDvdExemplairesListe(lesDvdExemplaires);
+                    RemplirDvdExemplairesListe(lesDvdExemplaires);
                     btnDvdModif.Enabled = true;
                     btnDvdSuppr.Enabled = true;
                 }
@@ -1584,7 +1629,7 @@ namespace Mediatek86.vue
                     sortedList = lesDvdExemplaires.OrderBy(o => o.IdEtat).ToList();
                     break;
             }
-            remplirDvdExemplairesListe(sortedList);
+            RemplirDvdExemplairesListe(sortedList);
         }
 
         /// <summary>
@@ -1618,7 +1663,7 @@ namespace Mediatek86.vue
                 {
                     MessageBox.Show("Mis à jour réussi!", "Succès");
                     lesDvdExemplaires = controle.GetExemplairesDocument(exemplaire.IdDocument);
-                    remplirDvdExemplairesListe(lesDvdExemplaires);
+                    RemplirDvdExemplairesListe(lesDvdExemplaires);
                     dgvDvdExemplaires.Rows[lesDvdExemplaires.FindIndex(x => x.Numero.Equals(exemplaire.Numero))].Selected = true;
                 }
                 else
@@ -1642,7 +1687,7 @@ namespace Mediatek86.vue
                 {
                     MessageBox.Show("Suppression réussie!", "Succès");
                     lesDvdExemplaires = controle.GetExemplairesDocument(exemplaire.IdDocument);
-                    remplirDvdExemplairesListe(lesDvdExemplaires);
+                    RemplirDvdExemplairesListe(lesDvdExemplaires);
                 }
                 else
                 {
@@ -1696,7 +1741,7 @@ namespace Mediatek86.vue
         /// remplir la datagridview avec la liste des exemplaires de dvd
         /// </summary>
         /// <param name="livre"></param>
-        private void remplirDvdExemplairesListe(List<Exemplaire> lesDvdExemplaires)
+        private void RemplirDvdExemplairesListe(List<Exemplaire> lesDvdExemplaires)
         {
             bdgDvdExemplaires.DataSource = lesDvdExemplaires;
             dgvDvdExemplaires.DataSource = bdgDvdExemplaires;
@@ -2014,8 +2059,8 @@ namespace Mediatek86.vue
                 case "DateAchat":
                     sortedList = lesRevueExemplaires.OrderBy(o => o.DateAchat).Reverse().ToList();
                     break;
-                case "Photo":
-                    sortedList = lesRevueExemplaires.OrderBy(o => o.Photo).ToList();
+                case "Etat":
+                    sortedList = lesRevueExemplaires.OrderBy(o => o.IdEtat).ToList();
                     break;
             }
             RemplirReceptionExemplairesListe(sortedList);
@@ -2295,7 +2340,7 @@ namespace Mediatek86.vue
                 double montant = Convert.ToDouble(txbMontantCommandeLivre.Text);
                 int idCommande = controle.GetLastIdCommande() + 1;
                 string idLivre = cbxSelectLivreCommande.SelectedValue.ToString();
-                CommandeDocument commandeDocument = new CommandeDocument(idCommande, DateTime.Today, montant,
+                CommandeDocument commandeDocument = new CommandeDocument(idCommande, dtpDateCommandeLivre.Value, montant,
                    (int)nudNbExemplairesCommandeLivre.Value, idLivre, 1, "en cours");
                 if (controle.CreerCommandeDocument(commandeDocument))
                 {
