@@ -20,16 +20,6 @@ namespace Mediatek86.metier
 
         public string Isbn { get => isbn; }
         public string Auteur { get => auteur; }
-        public string Collection { get => collection; }
-
-        /// <summary>
-        /// Récupération du libellé pour l'affichage dans les combos
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return this.Id;
-        }
-
+        public string Collection { get => collection; }       
     }
 }

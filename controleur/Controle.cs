@@ -29,9 +29,6 @@ namespace Mediatek86.controleur
             lesPublics = Dao.GetAllPublics();
             frmAuthentification = new FrmAuthentification(this);
             frmAuthentification.ShowDialog();
-            /*FrmMediatek frmMediatek = new FrmMediatek(this);
-            frmMediatek.ShowDialog();
-            */
         }
 
         /// <summary>
@@ -202,6 +199,16 @@ namespace Mediatek86.controleur
         }
 
         /// <summary>
+        /// supprimer un abonnement de revue dans la bdd
+        /// </summary>
+        /// <param name="idAbonnement"></param>
+        /// <returns></returns>
+        public bool SuppreAbonnementRevue(int idAbonnement)
+        {
+            return Dao.SupprAbonnementRevue(idAbonnement);
+        }
+
+        /// <summary>
         /// ajouter une commandeDocument dans la bdd
         /// </summary>
         /// <param name="commandeDocument"></param>
@@ -209,6 +216,16 @@ namespace Mediatek86.controleur
         public bool CreerCommandeDocument(CommandeDocument commandeDocument)
         {
             return Dao.CreerCommandeDocument(commandeDocument);
+        }
+
+        /// <summary>
+        /// ajouter un abonnement dans la bdd
+        /// </summary>
+        /// <param name="abonnement"></param>
+        /// <returns></returns>
+        public bool CreerAbonnement(Abonnement abonnement)
+        {
+            return Dao.CreerAbonnement(abonnement);
         }
 
         /// <summary>
@@ -240,6 +257,15 @@ namespace Mediatek86.controleur
         public bool SupprExemplaire(string idDocument, int numero)
         {
             return Dao.SupprExemplaire(idDocument, numero);
+        }
+
+        /// <summary>
+        /// récupérer la liste des abonnements de revue qui vont expirer dans moins de 30 jours depuis la bdd
+        /// </summary>
+        /// <returns></returns>
+        public List<Abonnement> GetAbonnementsAExpirer()
+        {
+            return Dao.GetAbonnementsAExpirer();
         }
 
     }

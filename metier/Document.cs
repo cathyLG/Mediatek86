@@ -38,6 +38,15 @@ namespace Mediatek86.metier
         public string IdRayon { get => idRayon; }
         public string Rayon { get => rayon; }
 
+        /// <summary>
+        /// Récupération de l'id et du titre pour l'affichage dans les combos
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.Id;
+        }
+
     }
 
 
