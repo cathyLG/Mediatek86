@@ -9,9 +9,6 @@ namespace Mediatek86.controleur
     public class Controle
     {
         private readonly FrmAuthentification frmAuthentification;
-        private readonly List<Livre> lesLivres;
-        private readonly List<Dvd> lesDvd;
-        private readonly List<Revue> lesRevues;
         private readonly List<Categorie> lesRayons;
         private readonly List<Categorie> lesPublics;
         private readonly List<Categorie> lesGenres;
@@ -20,10 +17,7 @@ namespace Mediatek86.controleur
         /// Ouverture de la fenêtre
         /// </summary>
         public Controle()
-        {
-            lesLivres = Dao.GetAllLivres();
-            lesDvd = Dao.GetAllDvd();
-            lesRevues = Dao.GetAllRevues();
+        {           
             lesGenres = Dao.GetAllGenres();
             lesRayons = Dao.GetAllRayons();
             lesPublics = Dao.GetAllPublics();
@@ -60,30 +54,30 @@ namespace Mediatek86.controleur
         }
 
         /// <summary>
-        /// getter sur la liste des livres
+        /// récupérer la liste des livres depuis la bdd
         /// </summary>
         /// <returns>Collection d'objets Livre</returns>
         public List<Livre> GetAllLivres()
         {
-            return lesLivres;
+           return Dao.GetAllLivres();
         }
 
         /// <summary>
-        /// getter sur la liste des Dvd
+        /// récupérer la liste des Dvd depuis la bdd
         /// </summary>
         /// <returns>Collection d'objets dvd</returns>
         public List<Dvd> GetAllDvd()
         {
-            return lesDvd;
+            return Dao.GetAllDvd();
         }
 
         /// <summary>
-        /// getter sur la liste des revues
+        /// récupérer la liste des revues depuis la bdd
         /// </summary>
         /// <returns>Collection d'objets Revue</returns>
         public List<Revue> GetAllRevues()
         {
-            return lesRevues;
+            return Dao.GetAllRevues();
         }
 
         /// <summary>

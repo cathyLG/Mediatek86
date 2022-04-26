@@ -657,9 +657,9 @@ namespace Mediatek86.vue
             // btnLivreAjout
             // 
             this.btnLivreAjout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLivreAjout.Location = new System.Drawing.Point(9, 115);
+            this.btnLivreAjout.Location = new System.Drawing.Point(6, 115);
             this.btnLivreAjout.Name = "btnLivreAjout";
-            this.btnLivreAjout.Size = new System.Drawing.Size(157, 22);
+            this.btnLivreAjout.Size = new System.Drawing.Size(172, 22);
             this.btnLivreAjout.TabIndex = 17;
             this.btnLivreAjout.Text = "Ajouter un nouveau livre";
             this.btnLivreAjout.UseVisualStyleBackColor = true;
@@ -720,7 +720,7 @@ namespace Mediatek86.vue
             // btnLivreModif
             // 
             this.btnLivreModif.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLivreModif.Location = new System.Drawing.Point(189, 115);
+            this.btnLivreModif.Location = new System.Drawing.Point(197, 115);
             this.btnLivreModif.Name = "btnLivreModif";
             this.btnLivreModif.Size = new System.Drawing.Size(96, 22);
             this.btnLivreModif.TabIndex = 35;
@@ -950,7 +950,7 @@ namespace Mediatek86.vue
             // nudDvdDuree
             // 
             this.nudDvdDuree.Location = new System.Drawing.Point(422, 19);
-            this.nudDvdDuree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nudDvdDuree.Margin = new System.Windows.Forms.Padding(2);
             this.nudDvdDuree.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -1137,9 +1137,9 @@ namespace Mediatek86.vue
             this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label31.Location = new System.Drawing.Point(357, 20);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(49, 13);
+            this.label31.Size = new System.Drawing.Size(54, 13);
             this.label31.TabIndex = 7;
-            this.label31.Text = "Durée :";
+            this.label31.Text = "Durée* :";
             // 
             // grpDvdRecherche
             // 
@@ -1171,9 +1171,9 @@ namespace Mediatek86.vue
             // btnDvdAjout
             // 
             this.btnDvdAjout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDvdAjout.Location = new System.Drawing.Point(9, 115);
+            this.btnDvdAjout.Location = new System.Drawing.Point(6, 115);
             this.btnDvdAjout.Name = "btnDvdAjout";
-            this.btnDvdAjout.Size = new System.Drawing.Size(163, 22);
+            this.btnDvdAjout.Size = new System.Drawing.Size(172, 22);
             this.btnDvdAjout.TabIndex = 17;
             this.btnDvdAjout.Text = "Ajouter un nouveau DVD";
             this.btnDvdAjout.UseVisualStyleBackColor = true;
@@ -1360,7 +1360,7 @@ namespace Mediatek86.vue
             this.tabRevues.Controls.Add(this.grpRevuesRecherche);
             this.tabRevues.Location = new System.Drawing.Point(4, 22);
             this.tabRevues.Name = "tabRevues";
-            this.tabRevues.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabRevues.Padding = new System.Windows.Forms.Padding(3);
             this.tabRevues.Size = new System.Drawing.Size(881, 519);
             this.tabRevues.TabIndex = 1;
             this.tabRevues.Text = "Revues";
@@ -1399,7 +1399,7 @@ namespace Mediatek86.vue
             // nudRevuesDelai
             // 
             this.nudRevuesDelai.Location = new System.Drawing.Point(150, 95);
-            this.nudRevuesDelai.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.nudRevuesDelai.Margin = new System.Windows.Forms.Padding(2);
             this.nudRevuesDelai.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -1620,7 +1620,7 @@ namespace Mediatek86.vue
             // btnRevueAjout
             // 
             this.btnRevueAjout.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRevueAjout.Location = new System.Drawing.Point(9, 115);
+            this.btnRevueAjout.Location = new System.Drawing.Point(6, 115);
             this.btnRevueAjout.Name = "btnRevueAjout";
             this.btnRevueAjout.Size = new System.Drawing.Size(172, 22);
             this.btnRevueAjout.TabIndex = 17;
@@ -2225,7 +2225,7 @@ namespace Mediatek86.vue
             this.tabAbonnementRevues.Controls.Add(this.grpRechercheRevueAbonnement);
             this.tabAbonnementRevues.Location = new System.Drawing.Point(4, 22);
             this.tabAbonnementRevues.Name = "tabAbonnementRevues";
-            this.tabAbonnementRevues.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabAbonnementRevues.Padding = new System.Windows.Forms.Padding(3);
             this.tabAbonnementRevues.Size = new System.Drawing.Size(881, 519);
             this.tabAbonnementRevues.TabIndex = 6;
             this.tabAbonnementRevues.Text = "Abonnements des revues";
@@ -2606,7 +2606,7 @@ namespace Mediatek86.vue
             this.tabCommandesLivres.Controls.Add(this.groupCommandeLivres);
             this.tabCommandesLivres.Location = new System.Drawing.Point(4, 22);
             this.tabCommandesLivres.Name = "tabCommandesLivres";
-            this.tabCommandesLivres.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabCommandesLivres.Padding = new System.Windows.Forms.Padding(3);
             this.tabCommandesLivres.Size = new System.Drawing.Size(881, 519);
             this.tabCommandesLivres.TabIndex = 5;
             this.tabCommandesLivres.Text = "Commandes des livres";

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Mediatek86.bdd;
 using System;
-using System.Windows.Forms;
 
 namespace Mediatek86.modele
 {
@@ -723,14 +722,17 @@ namespace Mediatek86.modele
 
             try
             {
-                BddMySql curs = BddMySql.GetInstance(connectionString);                
+                BddMySql curs = BddMySql.GetInstance(connectionString);
+                Console.WriteLine("req1+************" + req1);
+                Console.WriteLine("req2+************" + req2);
                 curs.ReqUpdate(req1, parameters1);
                 curs.ReqUpdate(req2, parameters2);
                 curs.Close();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return false;
             }
         }
