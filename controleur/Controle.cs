@@ -2,7 +2,7 @@
 using Mediatek86.modele;
 using Mediatek86.metier;
 using Mediatek86.vue;
-using System;
+using Serilog;
 
 
 namespace Mediatek86.controleur
@@ -15,15 +15,24 @@ namespace Mediatek86.controleur
         private readonly List<Categorie> lesGenres;
 
         /// <summary>
-        /// Ouverture de la fenêtre
+        /// Ouverture de la fenêtre authentification
         /// </summary>
         public Controle()
-        {           
+        {
             lesGenres = Dao.GetAllGenres();
             lesRayons = Dao.GetAllRayons();
             lesPublics = Dao.GetAllPublics();
             frmAuthentification = new FrmAuthentification(this);
             frmAuthentification.ShowDialog();
+
+            // serilog
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt",
+                rollingInterval: RollingInterval.Day,
+                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                .CreateLogger();
         }
 
         /// <summary>
@@ -35,12 +44,17 @@ namespace Mediatek86.controleur
         /// <param name="mdp"></param>
         /// <returns></returns>
         public int ControleAuthentification(string nom, string prenom, string mdp)
-        {
+        {     
             int idService = Dao.ControleAuthentification(nom, prenom, mdp);
             if (idService >1)
             {
                 frmAuthentification.Hide();
                 (new FrmMediatek(this, idService)).ShowDialog();
+                Log.Information("{0} {1} s'est connecté : idService {3}", prenom, nom, idService);
+            }
+            else
+            {
+                Log.Information("{0} {1} n'a pas réussit à se connecter : authentificaiton incorrecte", prenom, nom);
             }
             return idService;
         }

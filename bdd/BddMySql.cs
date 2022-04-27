@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
+using Serilog;
 
 namespace Mediatek86.bdd
 {
@@ -11,7 +12,7 @@ namespace Mediatek86.bdd
         /// Unique instance de la classe
         /// </summary>
         private static BddMySql instance = null;
-        
+
         /// <summary>
         /// objet de connexion à la BDD à partir d'une chaîne de connexion
         /// </summary>
@@ -49,6 +50,13 @@ namespace Mediatek86.bdd
             if (instance is null)
             {
                 instance = new BddMySql(stringConnect);
+                // serilog
+                Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.Console()                    
+                    .WriteTo.File("logs/errorslog.txt",
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+                    .CreateLogger();
             }
             return instance;
         }
@@ -60,7 +68,7 @@ namespace Mediatek86.bdd
         public void ReqSelect(string stringQuery, Dictionary<string, object> parameters)
         {
             MySqlCommand command;
-            
+
             try
             {
                 command = new MySqlCommand(stringQuery, connection);
@@ -76,7 +84,7 @@ namespace Mediatek86.bdd
             }
             catch (MySqlException e)
             {
-                Console.WriteLine(e.Message);
+                Log.Error("reqSelect : " + e.Message);
             }
             catch (InvalidOperationException e)
             {
@@ -148,7 +156,7 @@ namespace Mediatek86.bdd
             }
             catch (MySqlException e)
             {
-                Console.WriteLine(e.Message);
+                Log.Error("ReqUpdate : " + e.Message);
                 throw;
             }
             catch (InvalidOperationException e)
@@ -174,7 +182,7 @@ namespace Mediatek86.bdd
         private void ErreurGraveBddNonAccessible(Exception e)
         {
             MessageBox.Show("Base de données non accessibles", "Erreur grave");
-            Console.WriteLine(e.Message);
+            Log.Error("Pas d'accès à la bdd : " + e.Message);
             Environment.Exit(1);
         }
     }

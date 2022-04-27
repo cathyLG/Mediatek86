@@ -2631,7 +2631,6 @@ namespace Mediatek86.vue
             {
                 double montant = Convert.ToDouble(txbMontantCommandeLivre.Text);
                 int idCommande = controle.GetLastIdCommande() + 1;
-                Console.WriteLine("idcommande:**********" + idCommande);
                 string idLivre = cbxSelectLivreCommande.SelectedValue.ToString();
                 CommandeDocument commandeDocument = new CommandeDocument(idCommande, dtpDateCommandeLivre.Value, montant,
                    (int)nudNbExemplairesCommandeLivre.Value, idLivre, 1, "en cours");

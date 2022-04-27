@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Mediatek86.bdd;
 using System;
+using Serilog;
 
 namespace Mediatek86.modele
 {
@@ -258,18 +259,19 @@ namespace Mediatek86.modele
                 string etat = (string)curs.Field("libelle");
                 Exemplaire exemplaire = new Exemplaire(numero, dateAchat, photo, idEtat, etat, idDocuement);
                 lesExemplaires.Add(exemplaire);
-                Console.WriteLine("etat : **********" + etat);
             }
             curs.Close();
 
             return lesExemplaires;
         }
 
+
         /// <summary>
         /// récupérer toutes les commandes liées à un document
         /// </summary>
         /// <param name="idDocument"></param>
-        /// <returns>liste d'abonnements pour revue, liste de commandeDocument pour livre/dvd</returns>
+        /// <param name="typeDocument"></param>
+        /// <returns>liste d'objets Abonnement pour une revue, liste d'objet CommandeDocument pour un livre/dvd</returns>
         public static List<Commande> GetCommandes(string idDocument, string typeDocument)
         {
             List<Commande> lesCommandes = new List<Commande>();
@@ -333,9 +335,9 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
-        /// Retourne toutes les étapes de suivi à partir de la BDD
+        /// récupérer toutes les étapes de suivi à partir de la bdd
         /// </summary>
-        /// <returns></returns>
+        /// <returns>liste d'objets Suivi</returns>
         public static List<Suivi> GetAllSuivis()
         {
             List<Suivi> lesSuivis = new List<Suivi>();
@@ -355,9 +357,9 @@ namespace Mediatek86.modele
 
 
         /// <summary>
-        /// récupérer tous les etats
+        /// récupérer tous les états à partir de la bdd
         /// </summary>
-        /// <returns></returns>
+        /// <returns>liste d'objets Etat</returns>
         public static List<Etat> GetAllEtats()
         {
             List<Etat> lesEtats = new List<Etat>();
@@ -376,10 +378,10 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
-        /// ecriture d'un exemplaire en base de données
+        /// insérer un exemplaire dans la bdd
         /// </summary>
         /// <param name="exemplaire"></param>
-        /// <returns>true si l'insertion a pu se faire</returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool CreerExemplaire(Exemplaire exemplaire)
         {
             try
@@ -404,11 +406,10 @@ namespace Mediatek86.modele
             }
         }
         /// <summary>
-        /// ecriture d'un document dans la bdd
+        /// insérer un document dans la bdd
         /// </summary>
         /// <param name="document"></param>
-        /// <returns></returns>
-
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool CreerDocument(Document document)
         {
             // req 1 : insert into table document
@@ -496,10 +497,10 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
-        /// update un document dans la bdd
+        /// modifier un document dans la bdd
         /// </summary>
         /// <param name="document"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool ModifDocument(Document document)
         {
             // req 1 : update dans la table document
@@ -576,7 +577,7 @@ namespace Mediatek86.modele
         /// supprimer un document dans la bdd
         /// </summary>
         /// <param name="document"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool SupprDocument(Document document)
         {
             string req = "DELETE FROM ";
@@ -599,7 +600,6 @@ namespace Mediatek86.modele
                     }
             }
             req += " WHERE id=@id";
-            Console.WriteLine(req);
             Dictionary<string, object> parameters = new Dictionary<string, object>
             {
                 { "@id", document.Id}
@@ -622,7 +622,7 @@ namespace Mediatek86.modele
         /// </summary>
         /// <param name="idLivreDvd"></param>
         /// <param name="idSuivi"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool UpdateSuiviCommandeDocument(int idLivreDvd, int idSuivi)
         {
             string req = "UPDATE commandeDocument SET idSuivi=@idSuivi WHERE id=@idLivreDvd";
@@ -649,7 +649,7 @@ namespace Mediatek86.modele
         /// supprimer une commandedocument dans la bdd
         /// </summary>
         /// <param name="idCommandeDocument"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool SupprCommandeDocument(int idCommandeDocument)
         {
             string req = "DELETE FROM commandeDocument WHERE id=@id";
@@ -674,8 +674,8 @@ namespace Mediatek86.modele
         /// <summary>
         /// supprimer un abonnement de revue dans la bdd
         /// </summary>
-        /// <param name="idCommandeDocument"></param>
-        /// <returns></returns>
+        /// <param name="idAbonnement"></param>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool SupprAbonnementRevue(int idAbonnement)
         {
             string req = "DELETE FROM abonnement WHERE id=@id";
@@ -701,7 +701,7 @@ namespace Mediatek86.modele
         /// créer une commandeDocument dans la bdd
         /// </summary>
         /// <param name="commandeDocument"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool CreerCommandeDocument(CommandeDocument commandeDocument)
         {
             string req1 = "INSERT INTO commande VALUES(@id, @dateCommande, @montant)";
@@ -723,8 +723,6 @@ namespace Mediatek86.modele
             try
             {
                 BddMySql curs = BddMySql.GetInstance(connectionString);
-                Console.WriteLine("req1+************" + req1);
-                Console.WriteLine("req2+************" + req2);
                 curs.ReqUpdate(req1, parameters1);
                 curs.ReqUpdate(req2, parameters2);
                 curs.Close();
@@ -732,16 +730,16 @@ namespace Mediatek86.modele
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+               Console.WriteLine(ex.Message);
                 return false;
             }
         }
 
         /// <summary>
-        /// ajouter un abonnement dans la bdd
+        /// insérer un abonnement dans la bdd
         /// </summary>
         /// <param name="abonnement"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool CreerAbonnement(Abonnement abonnement)
         {
             string req1 = "INSERT INTO commande VALUES(@id, @dateCommande, @montant)";
@@ -762,9 +760,6 @@ namespace Mediatek86.modele
             try
             {
                 BddMySql curs = BddMySql.GetInstance(connectionString);
-                Console.WriteLine("req1:******" + req1);
-                Console.WriteLine("req2:******" + req2);
-                Console.WriteLine("idrevue:******" + abonnement.IdRevue);
                 curs.ReqUpdate(req1, parameters1);
                 curs.ReqUpdate(req2, parameters2);
                 curs.Close();
@@ -779,7 +774,7 @@ namespace Mediatek86.modele
         /// <summary>
         /// récupérer le dernier id des commandes depuis la bdd
         /// </summary>
-        /// <returns></returns>
+        /// <returns>max(id) dans la table commande</returns>
         public static int GetLastIdCommande()
         {
             string req = "SELECT MAX(id) FROM commande;";
@@ -805,8 +800,9 @@ namespace Mediatek86.modele
         /// mettre à jour l'état d'un exemplaire d'un document
         /// </summary>
         /// <param name="idDocument"></param>
+        /// <param name="numero"></param>
         /// <param name="idEtat"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool UpdateEtatExemplaire(string idDocument, int numero, string idEtat)
         {
             string req = "UPDATE exemplaire SET idEtat=@idEtat WHERE id=@idDocument AND numero=@numero";
@@ -834,7 +830,7 @@ namespace Mediatek86.modele
         /// </summary>
         /// <param name="idDocument"></param>
         /// <param name="numero"></param>
-        /// <returns></returns>
+        /// <returns>true si réussi, false si échoué</returns>
         public static bool SupprExemplaire(string idDocument, int numero)
         {
             string req = "DELETE FROM exemplaire WHERE id=@idDocument AND numero=@numero";
@@ -857,9 +853,9 @@ namespace Mediatek86.modele
         }
 
         /// <summary>
-        /// récupérer la liste des abonnements de revue qui vont expirer dans moins de 30 jours depuis la bdd
+        /// retourner la liste des abonnements de revue qui vont expirer dans moins de 30 jours depuis la bdd
         /// </summary>
-        /// <returns></returns>
+        /// <returns>liste d'objets Abonnement</returns>
         public static List<Abonnement> GetAbonnementsAExpirer()
         {
             List<Abonnement> lesAbonnements = new List<Abonnement>();
@@ -868,7 +864,6 @@ namespace Mediatek86.modele
             curs.ReqSelect(req, null);
             while (curs.Read())
             {
-                Console.WriteLine("*************un abonnement à expirer");
                 int id = (int)curs.Field("id");
                 DateTime dateCommande = (DateTime)curs.Field("dateCommande");
                 double montant = (double)curs.Field("montant");
