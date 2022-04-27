@@ -172,22 +172,22 @@ namespace Mediatek86.vue
                 e.Handled = true;
             }
         }
-       
-#endregion
+
+        #endregion
 
 
-#region Revues
-//-----------------------------------------------------------
-// ONGLET "Revues"
-//------------------------------------------------------------
+        #region Revues
+        //-----------------------------------------------------------
+        // ONGLET "Revues"
+        //------------------------------------------------------------
 
-/// <summary>
-/// Ouverture de l'onglet Revues : 
-/// appel des méthodes pour remplir le datagrid des revues et des combos (genre, rayon, public)
-/// </summary>
-/// <param name="sender"></param>
-/// <param name="e"></param>
-private void tabRevues_Enter(object sender, EventArgs e)
+        /// <summary>
+        /// Ouverture de l'onglet Revues : 
+        /// appel des méthodes pour remplir le datagrid des revues et des combos (genre, rayon, public)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tabRevues_Enter(object sender, EventArgs e)
         {
             lesRevues = controle.GetAllRevues();
             RemplirComboCategorie(lesGenres, bdgGenres, cbxRevuesGenres);
@@ -556,10 +556,10 @@ private void tabRevues_Enter(object sender, EventArgs e)
             }
         }
 
-    /// <summary>
-    /// enable le bouton de modification et celui de suppression pour une revue
-    /// </summary>
-    /// <param name="acces"></param>
+        /// <summary>
+        /// enable le bouton de modification et celui de suppression pour une revue
+        /// </summary>
+        /// <param name="acces"></param>
         private void AccesModifRevue(bool acces)
         {
             btnRevueModif.Enabled = acces;
@@ -602,7 +602,7 @@ private void tabRevues_Enter(object sender, EventArgs e)
         /// </summary>
         private void RemplirRevuesListeComplete()
         {
-            RemplirRevuesListe(lesRevues);            
+            RemplirRevuesListe(lesRevues);
         }
 
         /// <summary>
@@ -700,7 +700,7 @@ private void tabRevues_Enter(object sender, EventArgs e)
             dgvLivresListe.Columns["id"].DisplayIndex = 0;
             dgvLivresListe.Columns["titre"].DisplayIndex = 1;
 
-            DeselectDgvLivresListe();            
+            DeselectDgvLivresListe();
         }
 
         /// <summary>
@@ -820,7 +820,7 @@ private void tabRevues_Enter(object sender, EventArgs e)
                     {
                         MessageBox.Show("Le livre n°" + livre.Id + " est supprimé !", "Succès");
                         lesLivres = controle.GetAllLivres();
-                            RemplirLivresListeComplete();
+                        RemplirLivresListeComplete();
                     }
                     else
                     {
@@ -1019,7 +1019,7 @@ private void tabRevues_Enter(object sender, EventArgs e)
                 {
                     ViderLivresZones();
                 }
-            }           
+            }
         }
 
         /// <summary>
@@ -1313,7 +1313,7 @@ private void tabRevues_Enter(object sender, EventArgs e)
             dgvDvdListe.Columns["id"].DisplayIndex = 0;
             dgvDvdListe.Columns["titre"].DisplayIndex = 1;
 
-            DeselectDgvDvdListe();          
+            DeselectDgvDvdListe();
         }
 
         /// <summary>
@@ -2347,7 +2347,7 @@ private void tabRevues_Enter(object sender, EventArgs e)
                 {
                     foreach (Exemplaire exemplaire in lesExemplairesRevue)
                     {
-                        if (ParutionDansAbonnement(abonnement.DateCommande, abonnement.DateFinAbonnement, exemplaire.DateAchat))
+                        if (abonnement.ParutionDansAbonnement(exemplaire.DateAchat))
                         {
                             supprimable = false;
                             break;
@@ -2379,18 +2379,6 @@ private void tabRevues_Enter(object sender, EventArgs e)
                     MessageBox.Show("Suppression échouée", "Echec");
                 }
             }
-        }
-
-        /// <summary>
-        /// contrôler si la date d'un exemplaire de revue est compris entre la date de la commande et la date de fin d'abonnement
-        /// </summary>
-        /// <param name="dateCommande"></param>
-        /// <param name="dateFinAbonnement"></param>
-        /// <param name="dateParution"></param>
-        /// <returns></returns>
-        private bool ParutionDansAbonnement(DateTime dateCommande, DateTime dateFinAbonnement, DateTime dateParution)
-        {
-            return dateParution >= dateCommande && dateParution <= dateFinAbonnement;
         }
 
         /// <summary>
