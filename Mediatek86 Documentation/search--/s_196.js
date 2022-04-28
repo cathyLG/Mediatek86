@@ -1,0 +1,1 @@
+search_result['196']=["topic_000000000000006F.html","Dao Class","classe statique Dao qui envoie les requêtes sql à la bdd, et récupére les résultats"];

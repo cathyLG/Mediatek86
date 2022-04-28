@@ -6,13 +6,16 @@ using Serilog;
 
 namespace Mediatek86.modele
 {
+    /// <summary>
+    /// classe statique Dao qui envoie les requêtes sql à la bdd, et récupére les résultats
+    /// </summary>
     public static class Dao
     {
 
-        private static readonly string server = "localhost";
-        private static readonly string userid = "root";
-        private static readonly string password = "";
-        private static readonly string database = "mediatek86";
+        private static readonly string server = "mediatek86.csptlhmrka3u.us-east-1.rds.amazonaws.com";
+        private static readonly string userid = "admin";
+        private static readonly string password = "DKWYAaxwtppHT6ebOijL";
+        private static readonly string database = "Mediatek86";
         private static readonly string connectionString = "server=" + server + ";user id=" + userid + ";password=" + password + ";database=" + database + ";SslMode=none";
 
         /// <summary>

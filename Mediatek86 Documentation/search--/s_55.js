@@ -1,0 +1,1 @@
+search_result['55']=["topic_0000000000000028.html","Abonnement.ParutionDansAbonnement Method","contrôler si la date d\u0027un exemplaire de revue est compris entre la date de la commande et la date de fin d\u0027abonnement"];

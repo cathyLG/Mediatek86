@@ -1,0 +1,1 @@
+var breadcrumbs=[['-1',"",""],['2',"SOLUTION-WIDE PROPERTIES Reference","topic_0000000000000097.html"],['163',"Mediatek86.modele.Tests Namespace","topic_0000000000000094.html"],['164',"DaoTests Class","topic_0000000000000095.html"],['165',"Methods","topic_0000000000000095_methods--.html"]];

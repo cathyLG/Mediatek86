@@ -1,0 +1,1 @@
+search_result['225']=["topic_0000000000000087.html","Dao.GetAbonnementsAExpirer Method","retourner la liste des abonnements de revue qui vont expirer dans moins de 30 jours depuis la bdd"];

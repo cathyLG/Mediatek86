@@ -1,0 +1,1 @@
+search_result['38']=["topic_000000000000001C.html","Controle.SuppreAbonnementRevue Method","supprimer un abonnement de revue dans la bdd"];

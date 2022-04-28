@@ -1,0 +1,1 @@
+search_result['25']=["topic_000000000000000F.html","Controle.GetAllRevues Method","récupérer la liste des revues depuis la bdd"];

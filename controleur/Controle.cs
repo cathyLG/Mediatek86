@@ -7,12 +7,17 @@ using Serilog;
 
 namespace Mediatek86.controleur
 {
+    /// <summary>
+    /// classe Controle
+    /// </summary>
     public class Controle
     {
         private readonly FrmAuthentification frmAuthentification;
         private readonly List<Categorie> lesRayons;
         private readonly List<Categorie> lesPublics;
         private readonly List<Categorie> lesGenres;
+        private readonly List<Etat> lesEtats;
+        private readonly List<Suivi> lesSuivi;
 
         /// <summary>
         /// Ouverture de la fenêtre authentification
@@ -22,6 +27,8 @@ namespace Mediatek86.controleur
             lesGenres = Dao.GetAllGenres();
             lesRayons = Dao.GetAllRayons();
             lesPublics = Dao.GetAllPublics();
+            lesEtats = Dao.GetAllEtats();
+            lesSuivi = Dao.GetAllSuivis();
             frmAuthentification = new FrmAuthentification(this);
             frmAuthentification.ShowDialog();
 
@@ -30,8 +37,7 @@ namespace Mediatek86.controleur
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .WriteTo.File("logs/log.txt",
-                rollingInterval: RollingInterval.Day,
-                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+                rollingInterval: RollingInterval.Day)
                 .CreateLogger();
         }
 
@@ -50,7 +56,7 @@ namespace Mediatek86.controleur
             {
                 frmAuthentification.Hide();
                 (new FrmMediatek(this, idService)).ShowDialog();
-                Log.Information("{0} {1} s'est connecté : idService {3}", prenom, nom, idService);
+                Log.Information("{0} {1} s'est connecté : idService {2}", prenom, nom, idService);
             }
             else
             {
@@ -114,6 +120,15 @@ namespace Mediatek86.controleur
         }
 
         /// <summary>
+        /// récupérer tous les etats
+        /// </summary>
+        /// <returns></returns>
+        public List<Etat> GetAllEtats()
+        {
+            return lesEtats;
+        }
+
+        /// <summary>
         /// récupère les exemplaires d'un document
         /// </summary>
         /// <returns>Collection d'objets Exemplaire</returns>
@@ -139,17 +154,8 @@ namespace Mediatek86.controleur
         /// <returns></returns>
         public List<Suivi> GetAllSuivis()
         {
-            return Dao.GetAllSuivis();
-        }
-
-        /// <summary>
-        /// récupérer tous les etats
-        /// </summary>
-        /// <returns></returns>
-        public List<Etat> GetAllEtats()
-        {
-            return Dao.GetAllEtats();
-        }
+            return lesSuivi;
+        }       
 
         /// <summary>
         /// Crée un exemplaire d'une revue dans la bdd
@@ -181,6 +187,11 @@ namespace Mediatek86.controleur
             return Dao.ModifDocument(document);
         }
 
+        /// <summary>
+        /// supprimer un document dans la bdd
+        /// </summary>
+        /// <param name="document"></param>
+        /// <returns></returns>
         public bool SupprDocument(Document document)
         {
             return Dao.SupprDocument(document);
@@ -250,6 +261,7 @@ namespace Mediatek86.controleur
         /// mettre à jour l'état d'un exemplaire d'un document
         /// </summary>
         /// <param name="idDocument"></param>
+        /// <param name="numero"></param>
         /// <param name="idEtat"></param>
         /// <returns></returns>
         public bool UpdateEtatExemplaire(string idDocument, int numero, string idEtat)

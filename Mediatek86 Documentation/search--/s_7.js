@@ -1,0 +1,1 @@
+search_result['7']=["topic_0000000000000002.html","BddMySql.GetInstance Method","Crée une instance unique de la classe"];

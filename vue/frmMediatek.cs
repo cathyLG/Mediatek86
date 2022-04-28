@@ -8,6 +8,9 @@ using System.Linq;
 
 namespace Mediatek86.vue
 {
+    /// <summary>
+    /// fenêtre de gestion de média
+    /// </summary>
     public partial class FrmMediatek : Form
     {
 
@@ -42,7 +45,7 @@ namespace Mediatek86.vue
         private readonly List<Categorie> lesGenres;
         private readonly List<Categorie> lesPublics;
         private readonly List<Categorie> lesRayons;
-        private List<Suivi> lesSuivis;
+        private readonly List<Suivi> lesSuivis;
         private readonly List<Etat> lesEtats;
         private List<Livre> lesSelectLivres;
         private List<CommandeDocument> lesLivreCommandes;
@@ -58,8 +61,12 @@ namespace Mediatek86.vue
         private bool dvdEnModif = false;
         private bool revueEnModif = false;
         #endregion
-
-
+        
+        /// <summary>
+        /// initialiser la forme
+        /// </summary>
+        /// <param name="controle"></param>
+        /// <param name="idService"></param>
         internal FrmMediatek(Controle controle, int idService)
         {
             InitializeComponent();
@@ -85,6 +92,7 @@ namespace Mediatek86.vue
             lesPublics = this.controle.GetAllPublics();
             lesRayons = this.controle.GetAllRayons();
             lesEtats = this.controle.GetAllEtats();
+            lesSuivis = this.controle.GetAllSuivis();
         }
 
 
@@ -154,8 +162,9 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
-        /// accepter uniquement un montant en décimal
+        /// accepter uniquement la saisie d'un montant en décimal
         /// </summary>
+        /// <param name="sender"></param>
         /// <param name="e"></param>
         private void SaisieMontant(object sender, KeyPressEventArgs e)
         {
@@ -220,6 +229,9 @@ namespace Mediatek86.vue
             DeselectDgvRevuesListe();
         }
 
+        /// <summary>
+        /// nettoyer la sélection dans la datagridview
+        /// </summary>
         private void DeselectDgvRevuesListe()
         {
             bdgRevuesListe.Position = -1;
@@ -339,7 +351,7 @@ namespace Mediatek86.vue
 
 
         /// <summary>
-        /// événement click sur le bouton "valider"
+        /// événement click sur le bouton "valider" dans l'onglet revues
         /// valider la revue nouvellement créée ou modifiée, et le transmettre dans la bdd
         /// </summary>
         /// <param name="sender"></param>
@@ -704,7 +716,7 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
-        /// déselectionner la datagridview
+        /// nettoyer la sélection dans la datagridview
         /// </summary>
         private void DeselectDgvLivresListe()
         {
@@ -1243,7 +1255,7 @@ namespace Mediatek86.vue
         /// <summary>
         /// remplir la datagridview avec la liste des exemplaires du livre
         /// </summary>
-        /// <param name="livre"></param>
+        /// <param name="lesLivreExemplaires"></param>
         private void remplirLivreExemplairesListe(List<Exemplaire> lesLivreExemplaires)
         {
             bdgLivreExemplaires.DataSource = lesLivreExemplaires;
@@ -1317,7 +1329,7 @@ namespace Mediatek86.vue
         }
 
         /// <summary>
-        /// déselectionner la datagridview
+        /// nettoyer la sélection dans la datagridview
         /// </summary>
         private void DeselectDgvDvdListe()
         {
@@ -1807,7 +1819,7 @@ namespace Mediatek86.vue
         /// <summary>
         /// remplir la datagridview avec la liste des exemplaires de dvd
         /// </summary>
-        /// <param name="livre"></param>
+        /// <param name="lesDvdExemplaires"></param>
         private void RemplirDvdExemplairesListe(List<Exemplaire> lesDvdExemplaires)
         {
             bdgDvdExemplaires.DataSource = lesDvdExemplaires;
@@ -2255,7 +2267,7 @@ namespace Mediatek86.vue
         /// <summary>
         /// remplir des combobox pour sélectionner un livre par id
         /// </summary>
-        /// <param name="livresId"></param>
+        /// <param name="revues"></param>
         /// <param name="bdg"></param>
         /// <param name="cbx"></param>
         private void RemplirComboSelectRevue(List<Revue> revues, BindingSource bdg, ComboBox cbx)
@@ -2421,6 +2433,7 @@ namespace Mediatek86.vue
                 MessageBox.Show("Merci de remplir tous les champs", "Information");
             }
         }
+
         /// <summary>
         /// vider la zone de saisie du nouvel abonnement
         /// </summary>
@@ -2452,14 +2465,13 @@ namespace Mediatek86.vue
             lesSelectLivres = lesLivres.OrderBy(x => x.Id).ToList();
             RemplirComboLivreId(lesSelectLivres, bdgSelectLivre, cbxSelectLivre);
             RemplirComboLivreId(lesSelectLivres, bdgSelectLivre, cbxSelectLivreCommande);
-            lesSuivis = controle.GetAllSuivis();
             ViderSelectLivreInformations();
         }
 
         /// <summary>
         /// remplir des combobox pour sélectionner un livre par id
         /// </summary>
-        /// <param name="livresId"></param>
+        /// <param name="lesLivres"></param>
         /// <param name="bdg"></param>
         /// <param name="cbx"></param>
         private void RemplirComboLivreId(List<Livre> lesLivres, BindingSource bdg, ComboBox cbx)
@@ -2471,7 +2483,6 @@ namespace Mediatek86.vue
                 cbx.SelectedIndex = -1;
             }
         }
-
 
         /// <summary>
         /// remplir les informations détaillées et les commandes d'un livre sélectionnné
@@ -2508,6 +2519,7 @@ namespace Mediatek86.vue
             cbxSuiviCommandeLivre.SelectedIndex = -1;
             dgvLivreCommandesListe.ClearSelection();
         }
+
         /// <summary>
         /// permettre le mise à jour de suivi et la suppression
         /// </summary>
@@ -2593,7 +2605,6 @@ namespace Mediatek86.vue
             {
                 MessageBox.Show("L'étape de suivi n'est pas mise à jour !", "Echec");
             }
-
         }
 
         /// <summary>
@@ -2618,6 +2629,7 @@ namespace Mediatek86.vue
                 }
             }
         }
+
         /// <summary>
         /// événement clic sur le bouton "enregistrer"
         /// créer la commande dans la bdd
@@ -2681,7 +2693,6 @@ namespace Mediatek86.vue
         /// <param name="livre"></param>
         private void AfficherSelectLivreInformations(Livre livre)
         {
-
             txbClIsbn.Text = livre.Isbn;
             txbClTitre.Text = livre.Titre;
             txbClAuteur.Text = livre.Auteur;

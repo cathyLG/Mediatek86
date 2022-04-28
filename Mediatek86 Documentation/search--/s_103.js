@@ -1,0 +1,1 @@
+search_result['103']=["topic_0000000000000044.html","Document.ToString Method","Récupération de l\u0027id de document pour l\u0027affichage dans les combos"];

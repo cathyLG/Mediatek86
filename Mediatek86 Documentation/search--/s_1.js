@@ -1,0 +1,1 @@
+search_result['1']=["topic_0000000000000001.html","BddMySql Class","classe BddMySql qui gère l\u0027accès à la bdd"];

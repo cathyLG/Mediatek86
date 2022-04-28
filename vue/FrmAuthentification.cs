@@ -12,7 +12,7 @@ using Mediatek86.controleur;
 namespace Mediatek86.vue
 {
     /// <summary>
-    /// Fenêtre d'authentification (seuls l'administrateur, les employés de service administratif et de service prêts peuvent accéder à l'application)
+    /// Fenêtre d'authentification 
     /// </summary>
     public partial class FrmAuthentification : Form
     {
@@ -21,6 +21,10 @@ namespace Mediatek86.vue
         /// </summary>
         private readonly Controle controle;
 
+        /// <summary>
+        /// constructeur
+        /// </summary>
+        /// <param name="controle"></param>
         public FrmAuthentification(Controle controle)
         {
             InitializeComponent();
@@ -41,7 +45,7 @@ namespace Mediatek86.vue
                 {
                     MessageBox.Show("Merci de vérifier votre nom/prénom/mot de passe", "Authentification incorrecte");                    
                     txbMdp.Text = "";
-                    txbNom.Focus();
+                    txbMdp.Focus();
                 }
                 else if (idService == 1)
                 {

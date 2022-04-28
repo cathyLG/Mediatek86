@@ -6,6 +6,9 @@ using Serilog;
 
 namespace Mediatek86.bdd
 {
+    /// <summary>
+    /// classe BddMySql qui gère l'accès à la bdd
+    /// </summary>
     public class BddMySql
     {
         /// <summary>
@@ -65,6 +68,7 @@ namespace Mediatek86.bdd
         /// Exécute une requête type "select" et valorise le curseur
         /// </summary>
         /// <param name="stringQuery">requête select</param>
+        /// <param name="parameters"></param>
         public void ReqSelect(string stringQuery, Dictionary<string, object> parameters)
         {
             MySqlCommand command;

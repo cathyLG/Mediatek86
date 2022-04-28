@@ -1,0 +1,1 @@
+search_result['205']=["topic_0000000000000073.html","Dao.GetAllPublics Method","Retourne toutes les catégories de public à partir de la BDD"];

@@ -1,0 +1,1 @@
+search_result['21']=["topic_000000000000000B.html","Controle.ControleAuthentification Method","Demande la vérification de l\u0027authentification\r\nSi correct et habillié, alors ouvre la fenêtre principale"];
