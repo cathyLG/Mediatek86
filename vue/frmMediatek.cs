@@ -225,8 +225,7 @@ namespace Mediatek86.vue
             dgvRevuesListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvRevuesListe.Columns["id"].DisplayIndex = 0;
             dgvRevuesListe.Columns["titre"].DisplayIndex = 1;
-
-            DeselectDgvRevuesListe();
+            bdgRevuesListe.Position = 0;
         }
 
         /// <summary>
@@ -377,6 +376,7 @@ namespace Mediatek86.vue
                         lesRevues = controle.GetAllRevues();
                         RemplirRevuesListeComplete();
                         bdgRevuesListe.Position = lesRevues.FindIndex(x => x.Id.Equals(revue.Id));
+                        AfficheRevuesInfos(revue);
                     }
                     else
                     {
@@ -394,6 +394,7 @@ namespace Mediatek86.vue
                         lesRevues[index] = revue;
                         RemplirRevuesListeComplete();
                         bdgRevuesListe.Position = index;
+                        AfficheRevuesInfos(revue);
                     }
                     else
                     {
@@ -615,6 +616,7 @@ namespace Mediatek86.vue
         private void RemplirRevuesListeComplete()
         {
             RemplirRevuesListe(lesRevues);
+            ViderLivresZones();
         }
 
         /// <summary>
@@ -711,8 +713,7 @@ namespace Mediatek86.vue
             dgvLivresListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvLivresListe.Columns["id"].DisplayIndex = 0;
             dgvLivresListe.Columns["titre"].DisplayIndex = 1;
-
-            DeselectDgvLivresListe();
+            bdgLivresListe.Position = 0;
         }
 
         /// <summary>
@@ -874,6 +875,7 @@ namespace Mediatek86.vue
                         lesLivres = controle.GetAllLivres();
                         RemplirLivresListeComplete();
                         bdgLivresListe.Position = lesLivres.FindIndex(x => x.Id.Equals(livre.Id));
+                        AfficheLivresInfos(livre);
                     }
                     else
                     {
@@ -890,6 +892,7 @@ namespace Mediatek86.vue
                         lesLivres[index] = livre;
                         RemplirLivresListeComplete();
                         bdgLivresListe.Position = index;
+                        AfficheLivresInfos(livre);
                     }
                     else
                     {
@@ -1081,6 +1084,7 @@ namespace Mediatek86.vue
         private void RemplirLivresListeComplete()
         {
             RemplirLivresListe(lesLivres);
+            ViderLivresZones();
         }
 
         /// <summary>
@@ -1324,8 +1328,7 @@ namespace Mediatek86.vue
             dgvDvdListe.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvDvdListe.Columns["id"].DisplayIndex = 0;
             dgvDvdListe.Columns["titre"].DisplayIndex = 1;
-
-            DeselectDgvDvdListe();
+            bdgDvdListe.Position = 0;
         }
 
         /// <summary>
@@ -1502,6 +1505,7 @@ namespace Mediatek86.vue
                         lesDvd = controle.GetAllDvd();
                         RemplirDvdListeComplete();
                         bdgDvdListe.Position = lesDvd.FindIndex(x => x.Id.Equals(dvd.Id));
+                        AfficheDvdInfos(dvd);
                     }
                     else
                     {
@@ -1520,6 +1524,7 @@ namespace Mediatek86.vue
                         lesDvd[index] = dvd;
                         RemplirDvdListeComplete();
                         bdgDvdListe.Position = index;
+                        AfficheDvdInfos(dvd);
                     }
                     else
                     {
@@ -1814,6 +1819,7 @@ namespace Mediatek86.vue
         private void RemplirDvdListeComplete()
         {
             RemplirDvdListe(lesDvd);
+            ViderDvdZones();
         }
 
         /// <summary>
