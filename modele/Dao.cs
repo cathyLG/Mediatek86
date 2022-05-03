@@ -714,7 +714,7 @@ namespace Mediatek86.modele
                 { "@dateCommande", commandeDocument.DateCommande },
                 { "@montant", commandeDocument.Montant }
             };
-            string req2 = "INSERT INTO commandedocument VALUES(@id, @nbExemplaires, @idLivreDvd, @idSuivi)";
+            string req2 = "INSERT INTO commandeDocument VALUES(@id, @nbExemplaires, @idLivreDvd, @idSuivi)";
             Dictionary<string, object> parameters2 = new Dictionary<string, object>
             {
                 { "@id", commandeDocument.Id },

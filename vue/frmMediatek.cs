@@ -2268,6 +2268,7 @@ namespace Mediatek86.vue
             RemplirComboSelectRevue(lesRevues, bdgSelectRevue, cbxSelectRevue);
             RemplirComboSelectRevue(lesRevues, bdgSelectRevue, cbxSelectRevueNouvelAbonnement);
             ViderSelectRevueInformations();
+            dgvAbonnementsRevue.DataSource = null;
         }
 
         /// <summary>
@@ -2472,6 +2473,7 @@ namespace Mediatek86.vue
             RemplirComboLivreId(lesSelectLivres, bdgSelectLivre, cbxSelectLivre);
             RemplirComboLivreId(lesSelectLivres, bdgSelectLivre, cbxSelectLivreCommande);
             ViderSelectLivreInformations();
+            dgvLivreCommandesListe.DataSource = null;
         }
 
         /// <summary>
